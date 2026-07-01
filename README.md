@@ -12,8 +12,6 @@ Este projeto é mantido em colaboração oficial entre os canais:
 
 O ecossistema se divide em duas ramificações principais, ambas utilizando atualmente a interface **XFCE**, garantindo leveza máxima e alto desempenho.
 
-
-![wall](WallpaperBase.png)
 ### 🐧 Oxy Base (Debian Edition)
 *   **Desenvolvedor:** Gabriel (`@fprowindows`)
 *   **Foco principal:** Desenvolvimento de software e performance. Ele vem totalmente preparado para quem programa em **linguagem C** e outras linguagens de baixo ou alto nível.
