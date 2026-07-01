@@ -12,12 +12,15 @@ Este projeto é mantido em colaboração oficial entre os canais:
 
 O ecossistema se divide em duas ramificações principais, ambas utilizando atualmente a interface **XFCE**, garantindo leveza máxima e alto desempenho.
 
+
+![wall](WallpaperBase.png)
 ### 🐧 Oxy Base (Debian Edition)
 *   **Desenvolvedor:** Gabriel (`@fprowindows`)
 *   **Foco principal:** Desenvolvimento de software e performance. Ele vem totalmente preparado para quem programa em **linguagem C** e outras linguagens de baixo ou alto nível.
 *   **Base do Sistema:** Construído sobre a rocha sólida do **Debian Estável**. Para garantir a máxima estabilidade e compatibilidade em ambientes de produção e hardware variados, o sistema utiliza bases consolidadas como o **Debian 12.1** e outras versões anteriores altamente testadas.
 *   **Público-alvo:** Desenvolvedores, programadores e usuários avançados que precisam de um ambiente que nunca quebra.
 
+![wall](WallpaperYohan.png)
 ### 🎨 OxyohanOS
 *   **Desenvolvedor:** Johnzin (`@JohnzinOmochain`)
 *   **Foco principal:** Uso normal/cotidiano e experiência de usuário de ponta.
