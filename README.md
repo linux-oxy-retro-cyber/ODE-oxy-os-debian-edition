@@ -38,4 +38,5 @@ Navegue pelo menu lateral para acessar o guia de instalação, documentação do
 
 ## Contato:
 JohnzinOmochain: johnzincontato@gmail.com
+<br>
 Gabriel do Linux (@fprowindows): Gabriel, coloque aqui
