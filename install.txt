@@ -1,0 +1,58 @@
+
+==================================================================
+        GUIA DE INSTALAÇÃO MANUAL - OXYS DEBIAN EDITION v2.0
+==================================================================
+ Estilo: Gentoo / LFS / Arch Linux
+ Siga os passos abaixo para instalar o sistema diretamente no HD/SSD.
+
+------------------------------------------------------------------
+PASSO 1: Identificar e Particionar o Disco
+------------------------------------------------------------------
+Use o comando abaixo para listar os discos conectados:
+# lsblk
+
+Abra o utilitário de particionamento no seu disco (Ex: sda):
+# fdisk /dev/sda
+
+Dentro do fdisk:
+ 1. Digite 'o' para criar uma nova tabela de partições MBR (ou 'g' para GPT).
+ 2. Digite 'n' para criar uma nova partição primária (pressione Enter para aceitar os padrões).
+ 3. Digite 'w' para gravar as alterações e sair.
+
+------------------------------------------------------------------
+PASSO 2: Formatar e Montar a Partição
+------------------------------------------------------------------
+Formate a partição recém-criada em EXT4:
+# mkfs.ext4 /dev/sda1
+
+Crie o ponto de montagem temporário e monte a partição:
+# mkdir -p /mnt/oxys
+# mount /dev/sda1 /mnt/oxys
+
+------------------------------------------------------------------
+PASSO 3: Clonar o Sistema (Estilo Stage 3)
+------------------------------------------------------------------
+Copie todos os arquivos binários, compiladores e configurações do 
+Oxys OS direto para o HD montado, ignorando os diretórios virtuais:
+
+# rsync -aHAX --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} / /mnt/oxys/
+
+------------------------------------------------------------------
+PASSO 4: Instalar o Gerenciador de Boot (GRUB)
+------------------------------------------------------------------
+Instale o GRUB no registro de boot do disco:
+# grub-install --root-directory=/mnt/oxys /dev/sda
+
+Gere o arquivo de configuração de boot para o Kernel carregar o Oxys:
+# grub-mkconfig -o /mnt/oxys/boot/grub/grub.cfg
+
+------------------------------------------------------------------
+PASSO 5: Finalizar e Reiniciar
+------------------------------------------------------------------
+Desmonte o disco e reinicie a máquina:
+# umount /mnt/oxys
+# reboot
+
+Remova o pendrive e aproveite o seu Oxys Debian Edition!
+==================================================================
+
