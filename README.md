@@ -35,3 +35,7 @@ O ecossistema se divide em duas ramificações principais, ambas utilizando atua
 O Universo Oxy nasceu da ideia de que um sistema operacional não precisa ser genérico. Enquanto a **Oxy Base** entrega o motor bruto, estável e otimizado para codificação pesada, o **OxyohanOS** lapida essa estrutura para entregar uma interface bonita e acessível para o uso diário. 
 
 Navegue pelo menu lateral para acessar o guia de instalação, documentação do kernel e repositórios de pacotes de cada versão!
+
+## Contato:
+JohnzinOmochain: johnzincontato@gmail.com
+Gabriel do Linux (@fprowindows): Gabriel, coloque aqui
