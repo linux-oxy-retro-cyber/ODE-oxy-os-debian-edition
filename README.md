@@ -39,4 +39,4 @@ Navegue pelo menu lateral para acessar o guia de instalação, documentação do
 ## Contato:
 JohnzinOmochain: johnzincontato@gmail.com
 <br>
-Gabriel do Linux (@fprowindows): Gabriel, coloque aqui
+Gabriel do Linux (@fprowindows): apeludoff120@gmail.com ou maguraa53@gmail.com
