@@ -43,3 +43,9 @@ Navegue pelo menu lateral para acessar o guia de instalação, documentação do
 JohnzinOmochain: johnzincontato@gmail.com
 <br>
 Gabriel do Linux (@fprowindows): apeludoff120@gmail.com ou maguraa53@gmail.com
+---
+## Licença e Compatibilidade de Hardware
+
+Este sistema e seu código-fonte original (scripts de otimização, ajustes de kernel e configurações) são distribuídos sob a licença **GNU General Public License v3.0 (GPLv3)**.
+
+Para garantir compatibilidade imediata de hardware (como placas Wi-Fi, Bluetooth e touchpads) em notebooks e MacBooks, o sistema inclui drivers e firmwares pré-compilados redistribuídos a partir dos repositórios oficiais `non-free` e `non-free-firmware` da distribuição Debian.
