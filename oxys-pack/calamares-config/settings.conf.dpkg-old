@@ -1,0 +1,35 @@
+---
+modules-search: [ local ]
+
+instances:
+  - id:       unpackfs
+    module:   unpackfs
+    config:   unpackfs.conf
+
+sequence:
+  - show:
+    - welcome
+    - keyboard
+    - partition
+    - users
+    - summary
+  - exec:
+    - partition
+    - mount
+    - unpackfs
+    - users
+    - bootloader
+  - show:
+    - finished
+
+oem-setup: false
+disable-cancel: false
+disable-cancel-during-exec: false
+hide-back-and-next-during-exec: false
+quit-at-end: false
+
+finished-rebooting: true
+show-back-on-finished: false
+branding: default
+prompt-install: true
+dont-chroot: false
