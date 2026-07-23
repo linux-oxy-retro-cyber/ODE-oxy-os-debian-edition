@@ -1,0 +1,10 @@
+PRETTY_NAME="Oxys OS v1.5 (wired) beta"
+NAME="Oxys OS (wired)"
+VERSION_ID="1.5 beta"
+VERSION="1.5 beta"
+VERSION_CODENAME=(wired)
+ID=oxys
+ID_LIKE=debian
+HOME_URL="https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition"
+SUPPORT_URL="https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition"
+BUG_REPORT_URL="https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition"
