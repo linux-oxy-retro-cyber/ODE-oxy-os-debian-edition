@@ -1,0 +1,38 @@
+---
+componentName:   oxys
+welcomeStyleCalamares: true
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 800px,520px
+windowPlacement: center
+
+strings:
+    productName:         oxys
+    shortProductName:    oxys
+    version:             2.0
+    shortVersion:        2.0
+    versionedName:       2.0
+    shortVersionedName:  oxys os 2.0
+    bootloaderEntryName: oxys
+    productUrl:          https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition
+    supportUrl:          https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition
+    knownIssuesUrl:      https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition
+    releaseNotesUrl:     https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition
+    donateUrl:           https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition
+
+images:
+    productLogo:         "logo.png"
+    productIcon:         "logo.png"
+    productWelcome:      "welcome.png"
+    # productWallpaper:  ""
+
+slideshow:               "show.qml"
+
+style:
+   sidebarBackground:    "#2c3133"
+   sidebarText:          "#FFFFFF"
+   sidebarTextSelect:    "#4d7079"
+   sidebarTextSelect:    "#292F34"
+
+slideshowAPI: 2
+
