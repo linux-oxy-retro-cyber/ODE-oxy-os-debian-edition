@@ -50,9 +50,3 @@ Este sistema e seu código-fonte original (scripts de otimização, ajustes de k
 
 Para garantir compatibilidade imediata de hardware (como placas Wi-Fi, Bluetooth e touchpads) em notebooks e MacBooks, o sistema inclui drivers e firmwares pré-compilados redistribuídos a partir dos repositórios oficiais `non-free` e `non-free-firmware` da distribuição Debian.
 
----
-
-## Como baixar o pack de personalizaçao 
-[Oxys pack](https://drive.google.com/file/d/1PQoZ6a8wZHUadFHFHuB-eK8Pz6DUMIQk/view?usp=sharing)
-Dica: descompacte com premanencia de permiçoes
-nao de cp para uma pasta inteira so use o conteudo de base para modificar e personalizar o sistema
