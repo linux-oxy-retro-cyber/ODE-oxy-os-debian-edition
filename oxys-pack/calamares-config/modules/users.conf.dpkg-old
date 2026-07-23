@@ -1,0 +1,14 @@
+---
+defaultGroups:
+    - video
+    - audio
+    - input
+    - power
+    - storage
+    - wheel
+    - sudo
+autologinGroup:  autologin
+mandatoryGroups: true
+userSettingGroup: sudo
+rootSetting: true
+sudoersGroup: sudo

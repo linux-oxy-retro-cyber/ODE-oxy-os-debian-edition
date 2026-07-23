@@ -1,0 +1,15 @@
+---
+efiBootloaderId: "OxysOS"
+efiBootLoader: "grub"
+
+grubInstall: "grub-install"
+grubInstallArgs: ["--no-nvram", "--removable", "--force", "--recheck"]
+
+# Mudado de grub_mkconfig para grubMkconfig
+grubMkconfig: "grub-mkconfig"
+grubCfg: "/boot/grub/grub.cfg"
+grubProbe: "grub-probe"
+efiBootMgr: "efibootmgr"
+
+installSetup: true
+bootloaderEntryName: "OxysOS"
