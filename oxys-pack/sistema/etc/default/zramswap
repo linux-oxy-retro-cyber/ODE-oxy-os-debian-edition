@@ -1,0 +1,14 @@
+# Algoritmo de compressão de alta eficiência (similar ao uso do macOS)
+ALGORITHM=zstd
+
+# Usa até 100% do equivalente da RAM em espaço comprimido dinâmico
+PERCENT=100
+
+# Comente ou remova o limite fixo em MB (coloque # na frente)
+# MAX_SIZE_Mbytes=2048
+
+# Tamanho mínimo inicial pequeno para não desperdiçar espaço
+ALLOCATION_MIN_BYTES=67108864
+
+# Prioridade máxima para o zram ser usado SEMPRE antes do disco
+PRIORITY=32767
