@@ -54,3 +54,5 @@ Para garantir compatibilidade imediata de hardware (como placas Wi-Fi, Bluetooth
 
 ## Como baixar o pack de personalizaçao 
 [Oxys pack](https://drive.google.com/file/d/1PQoZ6a8wZHUadFHFHuB-eK8Pz6DUMIQk/view?usp=sharing)
+Dica: descompacte com premanencia de permiçoes
+nao de cp para uma pasta inteira so use o conteudo de base para modificar e personalizar o sistema
