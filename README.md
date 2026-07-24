@@ -49,4 +49,10 @@ Gabriel do Linux (@fprowindows): apeludoff120@gmail.com ou maguraa53@gmail.com
 Este sistema e seu código-fonte original (scripts de otimização, ajustes de kernel e configurações) são distribuídos sob a licença **GNU General Public License v3.0 (GPLv3)**.
 
 Para garantir compatibilidade imediata de hardware (como placas Wi-Fi, Bluetooth e touchpads) em notebooks e MacBooks, o sistema inclui drivers e firmwares pré-compilados redistribuídos a partir dos repositórios oficiais `non-free` e `non-free-firmware` da distribuição Debian.
+---
+## Trabalhando
+**Oxys OS**: Trabalhando em um **meta pacote** com um **pos instalaçao** seguido de personalizaçoes de **papel de parede, calamares,fastfetch** e instalaçao de varios app e traz o executavel do fastfeth pois ainda nao consegui embutilo no **posinst** e nem no **Control**. e vale lembrar que este meta pacote nao traz drives...
 
+**OxyohanOS**: Trabalhando no **calamares** e **erros**
+
+end...
