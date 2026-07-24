@@ -1,4 +1,4 @@
-![wall](logod/oxyohan-log.png)
+![wall](logos/oxyohan-log.png)
 #  Universo Oxy
 
 Bem-vindo à documentação oficial do **Universo Oxy**, um ecossistema de distribuições Linux projetado para diferentes perfis de usuários, unindo o melhor da estabilidade, customização e desenvolvimento. 
