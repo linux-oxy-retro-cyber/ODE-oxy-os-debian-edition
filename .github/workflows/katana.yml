@@ -1,0 +1,52 @@
+name: Katana Testadora de Pacotes do Oxys OS
+
+on:
+  workflow_dispatch: # Cria o botão manual para rodar o teste na aba Actions
+
+jobs:
+  testar-e-compactar:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:stable # Roda numa máquina com a versão mais recente do Debian Estável
+
+    steps:
+      # 1. Atualiza a lista do apt no Debian e instala o git, wget e apt-utils
+      - name: Preparar ambiente Debian
+        run: |
+          apt-get update
+          apt-get install -y git wget apt-utils systemd xz-utils squashfs-tools
+
+      # 2. Cria a pasta de testes e clona o repositório
+      - name: Clonar repositório e criar estrutura
+        run: |
+          mkdir -p /teste_packages
+          cd /teste_packages
+          git clone https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition.git .
+
+      # 3. Testa a instalação dos pacotes por ordem estrita de prioridade
+      - name: Testar instalação dos pacotes .deb (Prioridade -> Temas -> Calamares)
+        run: |
+          cd /teste_packages/oxys-pack/packges-beta/
+
+          echo "=== 1. Instalando Pacote de Prioridade (oxys-base.deb) ==="
+          apt-get install -y ./prioridade/oxys=base.deb || apt-get install -f -y
+
+          echo "=== 2. Instalando Pacote de Temas (oxys-os.deb) ==="
+          apt-get install -y ./temas/oxys-os.deb || apt-get install -f -y
+
+          echo "=== 3. Instalando Pacote Config do Calamares (oxy-calamares-settings.deb) ==="
+          apt-get install -y ./calamares-temas/oxy-calamares-settings.deb || apt-get install -f -y
+
+      # 4. Compacta a estrutura testada do sistema
+      - name: Compactar sistema testado
+        run: |
+          mkdir -p /resultado
+          tar -cJf /resultado/oxys-os-sistema-testado.tar.xz --exclude='./proc' --exclude='./sys' --exclude='./dev' /teste_packages
+
+      # 5. Salva o arquivo compactado nos Artefatos do GitHub
+      - name: Enviar arquivo compactado para download
+        uses: actions/upload-artifact@v4
+        with:
+          name: oxys-os-test-build
+          path: /resultado/oxys-os-sistema-testado.tar.xz
+          retention-days: 1 # O arquivo é mantido por 1 dia e depois deletado sozinho
