@@ -1,5 +1,14 @@
 
 #  Universo Oxy
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Base](https://img.shields.io/badge/Base-Debian-A81D33?logo=debian&logoColor=white)](https://www.debian.org)
+[![Installer](https://img.shields.io/badge/Installer-Calamares-1B7A9C?logo=linux&logoColor=white)](https://calamares.io/)
+[![Language](https://img.shields.io/badge/Language-Shell_Script-4E8098?logo=gnu-bash&logoColor=white)]()
+[![Arch](https://img.shields.io/badge/Arch-x86__64-informational.svg)]()
+
+---
+
+Descrição do repositório aqui...
 
 Bem-vindo à documentação oficial do **Universo Oxy**, um ecossistema de distribuições Linux projetado para diferentes perfis de usuários, unindo o melhor da estabilidade, customização e desenvolvimento. 
 
