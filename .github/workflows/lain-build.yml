@@ -1,0 +1,96 @@
+name: Lain Build - Geradora de ISO Oxys OS
+
+on:
+  workflow_dispatch: # Botão manual na aba Actions
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:stable
+
+    steps:
+      # 1. Configura repositórios do Debian (main, contrib, non-free, non-free-firmware)
+      - name: Configurar fontes e repositórios Non-Free
+        run: |
+          cat <<EOF > /etc/apt/sources.list
+          deb http://deb.debian.org/debian stable main contrib non-free non-free-firmware
+          deb http://deb.debian.org/debian-security stable-security main contrib non-free non-free-firmware
+          deb http://deb.debian.org/debian stable-updates main contrib non-free non-free-firmware
+          EOF
+          apt-get update
+
+      # 2. Instalar dependências para compilar a ISO e o Kernel Live
+      - name: Instalar ferramentas de Build e Kernel
+        run: |
+          apt-get install -y \
+            git wget xz-utils squashfs-tools xorriso \
+            grub-pc-bin grub-efi-amd64-bin mtools \
+            live-boot live-config linux-image-amd64 initramfs-tools \
+            firmware-linux-free firmware-linux-nonfree
+
+      # 3. Clonar o repositório do projeto
+      - name: Clonar repositório
+        run: |
+          mkdir -p /build_root
+          cd /build_root
+          git clone https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition.git .
+
+      # 4. Criar Chroot / Sistema do Oxys OS e aplicar pacotes .deb
+      - name: Preparar chroot e instalar pacotes do Oxys OS
+        run: |
+          cd /build_root/oxys-pack/packges-beta/
+
+          echo "=== Instalando Prioridade (oxys-base.deb) ==="
+          apt-get install -y ./prioridade/oxys=base.deb || apt-get install -f -y
+
+          echo "=== Instalando Temas (oxys-os.deb) ==="
+          apt-get install -y ./temas/oxys-os.deb || apt-get install -f -y
+
+          echo "=== Instalando Config Calamares (oxy-calamares-settings.deb) ==="
+          apt-get install -y ./calamares-temas/oxy-calamares-settings.deb || apt-get install -f -y
+
+      # 5. Estruturar o diretório Live da ISO e extrair Kernel/Initrd
+      - name: Estruturar diretórios /live e /boot/grub
+        run: |
+          mkdir -p /iso_work/live
+          mkdir -p /iso_work/boot/grub
+
+          # Copia o vmlinuz e initrd mais recentes gerados no sistema para o /live
+          cp -f /vmlinuz /iso_work/live/vmlinuz || cp -f /boot/vmlinuz-* /iso_work/live/vmlinuz
+          cp -f /initrd.img /iso_work/live/initrd.img || cp -f /boot/initrd.img-* /iso_work/live/initrd.img
+
+          # Compacta a raiz em filesystem.squashfs dentro da pasta /live
+          mksquashfs / /iso_work/live/filesystem.squashfs \
+            -e /iso_work /build_root /proc /sys /dev /run /tmp
+
+      # 6. Injetar GRUB.cfg personalizado
+      - name: Configurar GRUB bootloader
+        run: |
+          cat <<'EOF' > /iso_work/boot/grub/grub.cfg
+          set default=0
+          set timeout=3
+
+          insmod ext2
+          insmod vbe
+          insmod gfxterm
+
+          menuentry "Oxys Debian Edition (Live SquashFS)" {
+              linux /live/vmlinuz boot=live quiet splash
+              initrd /live/initrd.img
+          }
+          EOF
+
+      # 7. Compilar a ISO Bootável
+      - name: Gerar imagem ISO final
+        run: |
+          mkdir -p /resultado
+          grub-mkrescue -o /resultado/oxys-os-debian-edition.iso /iso_work
+
+      # 8. Enviar ISO para download
+      - name: Disponibilizar ISO em Artefatos
+        uses: actions/upload-artifact@v4
+        with:
+          name: oxys-os-debian-edition-iso
+          path: /resultado/oxys-os-debian-edition.iso
+          retention-days: 1
