@@ -8,6 +8,7 @@
 [![YouTube Gabriel do Linux](https://img.shields.io/badge/YouTube-Gabriel_do_Linux-FF0000?logo=youtube&logoColor=white)](https://youtube.com/@fprowindows?si=Ut4MthfTAL6Yf5ih)
 [![YouTube omochain](https://img.shields.io/badge/YouTube-omochain-FF0000?logo=youtube&logoColor=white)](https://youtube.com/@johnzinomochain?si=dPvf7zzrf67kuxji)
 [![Non-Profit](https://img.shields.io/badge/Project-Non--Profit-00A86B?logo=heart&logoColor=white)]()
+[![GitHub Release](https://img.shields.io/github/v/release/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition?color=blue&logo=github)](https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition/releases)
 ---
 
 Descrição do repositório aqui...
