@@ -1,30 +1,30 @@
 name: Katana Testadora de Pacotes do Oxys OS
 
 on:
-  workflow_dispatch: # Cria o botão manual para rodar o teste na aba Actions
+  workflow_dispatch: # Permite rodar o teste manualmente na aba Actions
 
 jobs:
   testar-e-compactar:
     runs-on: ubuntu-latest
     container:
-      image: debian:stable # Roda numa máquina com a versão mais recente do Debian Estável
+      image: debian:stable # Roda dentro de um container com a versão Debian Estável mais recente
 
     steps:
-      # 1. Atualiza a lista do apt no Debian e instala o git, wget e apt-utils
+      # 1. Preparar os utilitários básicos do Debian
       - name: Preparar ambiente Debian
         run: |
           apt-get update
           apt-get install -y git wget apt-utils systemd xz-utils squashfs-tools
 
-      # 2. Cria a pasta de testes e clona o repositório
-      - name: Clonar repositório e criar estrutura
+      # 2. Baixar os arquivos do repositório
+      - name: Clonar repositório
         run: |
           mkdir -p /teste_packages
           cd /teste_packages
           git clone https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition.git .
 
-      # 3. Testa a instalação dos pacotes por ordem estrita de prioridade
-      - name: Testar instalação dos pacotes .deb (Prioridade -> Temas -> Calamares)
+      # 3. Dar apt install direto nos arquivos .deb (Prioridade -> Temas -> Calamares)
+      - name: Testar e instalar pacotes .deb no sistema
         run: |
           cd /teste_packages/oxys-pack/packges-beta/
 
@@ -37,16 +37,23 @@ jobs:
           echo "=== 3. Instalando Pacote Config do Calamares (oxy-calamares-settings.deb) ==="
           apt-get install -y ./calamares-temas/oxy-calamares-settings.deb || apt-get install -f -y
 
-      # 4. Compacta a estrutura testada do sistema
-      - name: Compactar sistema testado
+      # 4. Compactar o / (raiz inteira do sistema) com os pacotes aplicados
+      - name: Compactar raiz do sistema (/)
         run: |
           mkdir -p /resultado
-          tar -cJf /resultado/oxys-os-sistema-testado.tar.xz --exclude='./proc' --exclude='./sys' --exclude='./dev' /teste_packages
+          tar -cJf /resultado/oxys-os-sistema-testado.tar.xz \
+            --exclude='/resultado' \
+            --exclude='/proc' \
+            --exclude='/sys' \
+            --exclude='/dev' \
+            --exclude='/run' \
+            --exclude='/tmp' \
+            --exclude='/teste_packages' /
 
-      # 5. Salva o arquivo compactado nos Artefatos do GitHub
-      - name: Enviar arquivo compactado para download
+      # 5. Disponibilizar o arquivo compactado para download
+      - name: Enviar arquivo compactado do sistema para download
         uses: actions/upload-artifact@v4
         with:
-          name: oxys-os-test-build
+          name: oxys-os-full-rootfs
           path: /resultado/oxys-os-sistema-testado.tar.xz
-          retention-days: 1 # O arquivo é mantido por 1 dia e depois deletado sozinho
+          retention-days: 1 # Expira em 1 dia
