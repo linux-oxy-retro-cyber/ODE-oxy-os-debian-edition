@@ -5,7 +5,8 @@
 [![Installer](https://img.shields.io/badge/Installer-Calamares-1B7A9C?logo=linux&logoColor=white)](https://calamares.io/)
 [![Language](https://img.shields.io/badge/Language-Shell_Script-4E8098?logo=gnu-bash&logoColor=white)]()
 [![Arch](https://img.shields.io/badge/Arch-x86__64-informational.svg)]() 
-[![UI](https://img.shields.io/badge/UI-QML-41CD52?logo=qt&logoColor=white)](https://doc.qt.io/qt-6/qtqml-index.html)
+[![YouTube Gabriel do Linux](https://img.shields.io/badge/YouTube-Gabriel_do_Linux-FF0000?logo=youtube&logoColor=white)](https://youtube.com/@fprowindows?si=Ut4MthfTAL6Yf5ih)
+[![YouTube omochain](https://img.shields.io/badge/YouTube-omochain-FF0000?logo=youtube&logoColor=white)](https://youtube.com/@johnzinomochain?si=dPvf7zzrf67kuxji)
 ---
 
 Descrição do repositório aqui...
