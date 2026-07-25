@@ -1,0 +1,61 @@
+name: Lain PR-Build - Testador de Pull Requests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+jobs:
+  testar-build-pr:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:stable
+
+    steps:
+      - name: Baixar código do Pull Request
+        uses: actions/checkout@v4
+
+      - name: Configurar ambiente Debian
+        run: |
+          cat <<EOF > /etc/apt/sources.list
+          deb http://deb.debian.org/debian stable main contrib non-free non-free-firmware
+          deb http://deb.debian.org/debian-security stable-security main contrib non-free non-free-firmware
+          deb http://deb.debian.org/debian stable-updates main contrib non-free non-free-firmware
+          EOF
+          apt-get update
+          apt-get install -y git wget xz-utils squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools live-boot live-config linux-image-amd64
+
+      - name: Testar Instalação dos Pacotes do PR
+        run: |
+          echo "=== Lain PR-Build: Validando instalação dos pacotes .deb ==="
+          if [ -d "oxys-pack/packges-beta" ]; then
+            apt-get install -y ./oxys-pack/packges-beta/*/*.deb || apt-get install -f -y
+          fi
+
+      - name: Gerar ISO de Teste do PR
+        run: |
+          mkdir -p /iso_work/live /iso_work/boot/grub
+          cp -f /vmlinuz /iso_work/live/vmlinuz || cp -f /boot/vmlinuz-* /iso_work/live/vmlinuz
+          cp -f /initrd.img /iso_work/live/initrd.img || cp -f /boot/initrd.img-* /iso_work/live/initrd.img
+
+          mksquashfs / /iso_work/live/filesystem.squashfs -e /iso_work /proc /sys /dev /run /tmp
+
+          cat <<'EOF' > /iso_work/boot/grub/grub.cfg
+          set default=0
+          set timeout=3
+          menuentry "Oxys OS / Oxyhon OS (PR Test)" {
+              linux /live/vmlinuz boot=live quiet splash
+              initrd /live/initrd.img
+          }
+          EOF
+
+          mkdir -p /resultado
+          grub-mkrescue -o /resultado/test-pr-${{ github.event.number }}.iso /iso_work
+
+      - name: Publicar ISO de Teste nos Artefatos
+        uses: actions/upload-artifact@v4
+        with:
+          name: oxys-pr-${{ github.event.number }}-test-iso
+          path: /resultado/test-pr-${{ github.event.number }}.iso
+          retention-days: 3
