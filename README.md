@@ -7,6 +7,7 @@
 [![Arch](https://img.shields.io/badge/Arch-x86__64-informational.svg)]() 
 [![YouTube Gabriel do Linux](https://img.shields.io/badge/YouTube-Gabriel_do_Linux-FF0000?logo=youtube&logoColor=white)](https://youtube.com/@fprowindows?si=Ut4MthfTAL6Yf5ih)
 [![YouTube omochain](https://img.shields.io/badge/YouTube-omochain-FF0000?logo=youtube&logoColor=white)](https://youtube.com/@johnzinomochain?si=dPvf7zzrf67kuxji)
+[![Non-Profit](https://img.shields.io/badge/Project-Non--Profit-00A86B?logo=heart&logoColor=white)]()
 ---
 
 Descrição do repositório aqui...
