@@ -16,7 +16,6 @@
 </div>
 ---
 
-Descrição do repositório aqui...
 
 Bem-vindo à documentação oficial do **Universo Oxy**, um ecossistema de distribuições Linux projetado para diferentes perfis de usuários, unindo o melhor da estabilidade, customização e desenvolvimento. 
 
