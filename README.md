@@ -4,8 +4,8 @@
 [![Base](https://img.shields.io/badge/Base-Debian-A81D33?logo=debian&logoColor=white)](https://www.debian.org)
 [![Installer](https://img.shields.io/badge/Installer-Calamares-1B7A9C?logo=linux&logoColor=white)](https://calamares.io/)
 [![Language](https://img.shields.io/badge/Language-Shell_Script-4E8098?logo=gnu-bash&logoColor=white)]()
-[![Arch](https://img.shields.io/badge/Arch-x86__64-informational.svg)]()
-
+[![Arch](https://img.shields.io/badge/Arch-x86__64-informational.svg)]() 
+[![UI](https://img.shields.io/badge/UI-QML-41CD52?logo=qt&logoColor=white)](https://doc.qt.io/qt-6/qtqml-index.html)
 ---
 
 Descrição do repositório aqui...
