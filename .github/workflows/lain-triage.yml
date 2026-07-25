@@ -1,0 +1,48 @@
+name: Lain Triage - Triagem e Notificacoes
+
+on:
+  issues:
+    types: [opened, labeled]
+  pull_request:
+    types: [opened]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comentar de Boas-Vindas
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const isPR = !!context.payload.pull_request;
+            const issueNumber = context.issue.number;
+            const author = context.actor;
+            
+            let message = `Olá @${author}! 👋\n\nA **Lain Triage** recebeu o seu ${isPR ? 'Pull Request' : 'relatório/sugestão'}.\n\nA equipe de liderança do **Oxys OS / Oxyhon OS** foi notificada no e-mail oficial e vai analisar em breve.\n\nObrigado por contribuir com o projeto! 🚀`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: message
+            });
+
+      - name: Enviar E-mail de Alerta para Liderança
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: oxys.contact.oficial@gmail.com
+          password: ${{ secrets.MAIL_APP_PASSWORD }}
+          subject: "[OXYS/OXYHON NOTIFICAÇÃO] Nova Atividade no Repositório (${{ github.event_name }})"
+          to: oxys.contact.oficial@gmail.com
+          from: Lain Triage <oxys.contact.official@gmail.com>
+          body: |
+            Alerta da Lain Triage!
+
+            O usuário @${{ github.actor }} abriu uma nova atividade no repositório:
+            Título: ${{ github.event.issue.title || github.event.pull_request.title }}
+            Link: ${{ github.event.issue.html_url || github.event.pull_request.html_url }}
+
+            Acesse o GitHub para revisar.
