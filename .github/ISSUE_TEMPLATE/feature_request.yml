@@ -1,0 +1,23 @@
+name: "💡 Sugestão / Ideia de Recurso"
+description: Diga o que você gostaria de ver no Oxys OS ou Oxyhon OS.
+title: "[SUGESTÃO]: "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: sistema
+    attributes:
+      label: Para qual sistema é a sua sugestão?
+      options:
+        - "Oxys OS"
+        - "Oxyhon OS"
+        - "Ambos"
+    validations:
+      required: true
+
+  - type: textarea
+    id: ideia
+    attributes:
+      label: Descreva a sua ideia ou melhoria
+      placeholder: Ex: Adicionar um atalho de teclado para abrir o terminal customizado.
+    validations:
+      required: true
