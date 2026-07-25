@@ -71,4 +71,25 @@ Para garantir compatibilidade imediata de hardware (como placas Wi-Fi, Bluetooth
 
 **OxyohanOS**: Trabalhando no **calamares** e **erros**
 
-end...
+------
+
+## 🤝 Contribuições da Comunidade
+
+Este é um projeto independente e comunitário, e contribuições são muito bem-vindas! Se você deseja enviar melhorias, correções de bugs, scripts ou modificações para o projeto, por favor, siga as regras abaixo para o envio:
+
+### 📦 Regras para Envio de Contribuições
+
+Para garantir que tudo seja analisado e integrado de forma organizada e segura, exigimos que todas as contribuições sigam este padrão:
+
+1. **Envio Compactado:** 
+   * Envie seus arquivos alterados ou novos scripts em um arquivo compactado (formatos aceitos: `.zip`, `.tar.gz` ou `.tar.xz`).
+   * Vc tambem pode entrar em contato pelos emails de contado fornecido anteriomente
+2. **Documentação de Mudanças (OBRIGATÓRIO):** 
+   * Junto com os arquivos dentro do pacote compactado, você **deve incluir** um arquivo `README.md` (ou um arquivo de `changelog.log`) explicando detalhadamente:
+     * **O que foi modificado/adicionado:** Liste todos os arquivos, linhas de código ou configurações que foram alteradas.
+     * **Por que a mudança foi feita:** Explique o motivo da alteração, qual problema ela resolve ou qual melhoria ela traz para o sistema.
+
+> ⚠️ **Aviso:** Envíos desorganizados, sem o arquivo explicativo ou sem a estrutura de log necessária não serão analisados nem integrados ao repositório principal.
+
+---
+
