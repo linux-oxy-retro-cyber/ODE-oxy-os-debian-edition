@@ -1,5 +1,7 @@
 
-#  Universo Oxy
+#  Universo Oxy 
+<div align="center">
+
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Base](https://img.shields.io/badge/Base-Debian-A81D33?logo=debian&logoColor=white)](https://www.debian.org)
 [![Installer](https://img.shields.io/badge/Installer-Calamares-1B7A9C?logo=linux&logoColor=white)](https://calamares.io/)
@@ -11,7 +13,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition?color=blue&logo=github)](https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition/releases)
 [![Indie](https://img.shields.io/badge/Type-Indie_Project-FF4500?logo=rocket&logoColor=white)]()
 [![Community](https://img.shields.io/badge/Project-Community-7289DA?logo=github&logoColor=white)]()
-
+</div>
 ---
 
 Descrição do repositório aqui...
