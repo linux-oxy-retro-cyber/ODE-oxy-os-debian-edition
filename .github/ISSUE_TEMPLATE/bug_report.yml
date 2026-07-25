@@ -1,0 +1,47 @@
+name: "🐛 Relatório de Bug"
+description: Encontrou um problema no Oxys OS ou Oxyhon OS? Envie os detalhes por aqui.
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: sistema
+    attributes:
+      label: Qual sistema operacional apresentou o erro?
+      options:
+        - "Oxys OS"
+        - "Oxyhon OS"
+    validations:
+      required: true
+
+  - type: textarea
+    id: descricao
+    attributes:
+      label: Descrição do Problema
+      description: Explique o que aconteceu de forma detalhada.
+      placeholder: Ex: O Calamares fecha sozinho na etapa de particionamento.
+    validations:
+      required: true
+
+  - type: textarea
+    id: passos
+    attributes:
+      label: Passos para Reproduzir o Erro
+      placeholder: |
+        1. Dar boot na ISO
+        2. Abrir o instalador
+        3. Clicar em...
+    validations:
+      required: true
+
+  - type: input
+    id: hardware
+    attributes:
+      label: Configurações do seu Hardware / VM
+      placeholder: Ex: 4GB RAM, Intel Core i3, VirtualBox
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs do Sistema ou Capturas de Tela
+      description: Cole logs de erro ou arraste imagens/prints aqui.
+      placeholder: Arraste suas imagens ou cole o texto do log aqui...
