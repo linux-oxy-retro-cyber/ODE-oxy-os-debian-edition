@@ -76,7 +76,7 @@ jobs:
           insmod gfxterm
 
           menuentry "Oxys Debian Edition (Live SquashFS)" {
-              linux /live/vmlinuz boot=live quiet splash
+              linux /live/vmlinuz boot=live
               initrd /live/initrd.img
           }
           EOF
