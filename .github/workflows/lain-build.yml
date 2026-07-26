@@ -1,4 +1,4 @@
-name: Nova Lain Build - Oxys OS (Debootstrap)
+name: Lain Build - Full Oxys OS
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ jobs:
   build-iso:
     runs-on: ubuntu-latest
     steps:
-      - name: Instalar ferramentas de Build
+      - name: Instalar ferramentas
         run: |
           sudo apt-get update
           sudo apt-get install -y debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools
@@ -15,53 +15,68 @@ jobs:
       - name: Clonar repositório
         uses: actions/checkout@v4
 
-      - name: Construir sistema base com Debootstrap
+      - name: Criar Raiz
         run: |
-          # Cria a pasta raiz limpa
           sudo mkdir -p /oxys_root
-          # Baixa apenas o essencial (sem lixo do GitHub/Container)
           sudo debootstrap --variant=minbase stable /oxys_root http://deb.debian.org/debian
 
-      - name: Preparar chroot e Injetar pacotes
+      - name: Instalar pacotes
         run: |
-          # Prepara o ambiente para rodar dentro da raiz nova
           sudo cp /etc/resolv.conf /oxys_root/etc/resolv.conf
           sudo mount --bind /proc /oxys_root/proc
           sudo mount --bind /sys /oxys_root/sys
           sudo mount --bind /dev /oxys_root/dev
-          
-          # Copia seus pacotes customizados para dentro do sistema novo
           sudo mkdir -p /oxys_root/tmp/packages
           sudo cp -r oxys-pack/packges-beta/*/*.deb /oxys_root/tmp/packages/
-          
-          # Instala os pacotes com autoridade (o dpkg respeitará os Replaces/Breaks do seu control)
-          sudo chroot /oxys_root /bin/bash -c "dpkg -i /tmp/packages/*.deb"
-          
-          # Ajusta dependências caso algo tenha faltado
-          sudo chroot /oxys_root /bin/bash -c "apt-get install -f -y"
+          # O apt resolve as dependências automaticamente
+          sudo chroot /oxys_root /bin/bash -c "apt-get update && apt-get install -y /tmp/packages/*.deb"
 
-      - name: Limpeza e Finalização do Sistema
+      - name: Aplicar Configuracoes Lain
         run: |
-          # Remove os arquivos temporários dos pacotes
-          sudo rm -rf /oxys_root/tmp/packages
-          sudo rm -rf /oxys_root/var/lib/apt/lists/*
+          # Hostname
+          echo "oxys-os" | sudo tee /oxys_root/etc/hostname
+          echo "127.0.0.1 localhost oxys-os" | sudo tee /oxys_root/etc/hosts
           
-          # Garante que o diretório live exista
-          sudo mkdir -p /oxys_root/live
+          # OS Release[cite: 3]
+          sudo tee /oxys_root/etc/os-release <<EOF
+          PRETTY_NAME="Oxys OS v2.0 (wired)"
+          NAME="Oxys OS (wired)"
+          VERSION_ID="2.0"
+          VERSION="2.0"
+          VERSION_CODENAME=(wired)
+          ID=oxys
+          ID_LIKE=debian
+          HOME_URL="https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition"
+          SUPPORT_URL="https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition"
+          BUG_REPORT_URL="https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition/pulls"
+          EOF
+          
+          # Grub[cite: 1]
+          sudo tee /oxys_root/etc/default/grub <<EOF
+          GRUB_DEFAULT=0
+          GRUB_TIMEOUT=5
+          GRUB_DISTRIBUTOR="Oxys OS  "
+          GRUB_CMDLINE_LINUX_DEFAULT="quiet"
+          GRUB_CMDLINE_LINUX=""
+          EOF
+          
+          # Zram[cite: 2]
+          sudo tee /oxys_root/etc/default/zramswap <<EOF
+          ALGORITHM=zstd
+          PERCENT=100
+          ALLOCATION_MIN_BYTES=67108864
+          PRIORITY=32767
+          EOF
 
-      - name: Gerar SquashFS e ISO
+      - name: Gerar ISO
         run: |
-          # Estrutura de pastas da ISO
           mkdir -p iso_work/boot/grub
-          
-          # Compacta a raiz limpa (apenas o que está em /oxys_root)
           sudo mksquashfs /oxys_root iso_work/live/filesystem.squashfs -comp xz
           
-          # Copia kernel/initrd do sistema de build (ou você pode copiar do seu pacote oxy-base se tiver o kernel lá)
-          sudo cp /boot/vmlinuz-* /iso_work/live/vmlinuz 2>/dev/null || true
-          sudo cp /boot/initrd.img-* /iso_work/live/initrd.img 2>/dev/null || true
+          # Copia kernel/initrd do chroot (se estiver lá) ou do ambiente de build
+          sudo cp /oxys_root/boot/vmlinuz-* iso_work/live/vmlinuz 2>/dev/null || sudo cp /boot/vmlinuz-* iso_work/live/vmlinuz
+          sudo cp /oxys_root/boot/initrd.img-* iso_work/live/initrd.img 2>/dev/null || sudo cp /boot/initrd.img-* iso_work/live/initrd.img
 
-          # Cria o GRUB config
           cat <<EOF > iso_work/boot/grub/grub.cfg
           menuentry "Oxys OS (Live)" {
               linux /live/vmlinuz boot=live
@@ -69,10 +84,9 @@ jobs:
           }
           EOF
           
-          # Gera a ISO final
           grub-mkrescue -o oxys-os.iso iso_work
 
-      - name: Upload da ISO
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: oxys-os-iso
