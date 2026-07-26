@@ -10,8 +10,8 @@ jobs:
       image: debian:stable
 
     steps:
-      # 1. Configura repositórios do Debian sem duplicar no sources.list
-      - name: Configurar fontes e repositórios Non-Free
+      # 1. Configura repositórios do Debian e instala ca-certificates pra permitir o git clone via HTTPS
+      - name: Configurar fontes, repositórios Non-Free e Certificados
         run: |
           export DEBIAN_FRONTEND=noninteractive
           # Limpa o sources.list antigo para evitar avisos duplicados
@@ -33,6 +33,7 @@ jobs:
           EOF
 
           apt-get update -qq
+          apt-get install -y ca-certificates
 
       # 2. Instalar dependências para compilar a ISO e o Kernel Live
       - name: Instalar ferramentas de Build e Kernel
