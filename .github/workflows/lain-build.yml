@@ -18,12 +18,12 @@ jobs:
           deb http://deb.debian.org/debian-security stable-security main contrib non-free non-free-firmware
           deb http://deb.debian.org/debian stable-updates main contrib non-free non-free-firmware
           EOF
-          apt-get update
+          apt update
 
       # 2. Instalar dependências para compilar a ISO e o Kernel Live
       - name: Instalar ferramentas de Build e Kernel
         run: |
-          apt-get install -y \
+          apt install -y \
             git wget xz-utils squashfs-tools xorriso \
             grub-pc-bin grub-efi-amd64-bin mtools \
             live-boot live-config linux-image-amd64 initramfs-tools \
@@ -36,19 +36,19 @@ jobs:
           cd /build_root
           git clone https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition.git .
 
-      # 4. Criar Chroot / Sistema do Oxys OS e aplicar pacotes .deb
+      # 4. Criar Chroot / Sistema do Oxys OS e aplicar pacotes .deb diretamente com apt install
       - name: Preparar chroot e instalar pacotes do Oxys OS
         run: |
           cd /build_root/oxys-pack/packges-beta/
 
-          echo "=== Instalando todos os pacotes .deb da estrutura ==="
-          # Usa dpkg para tentar instalar todos os pacotes (.deb) independente de subpastas
-          dpkg -i ./prioridade/*.deb || true
-          dpkg -i ./temas/*.deb || true
-          dpkg -i ./calamares-temas/*.deb || true
+          echo "=== Instalando pacotes de prioridade e suas dependências ==="
+          apt install -y ./prioridade/*.deb
 
-          echo "=== Resolvendo dependências dos pacotes ==="
-          apt-get install -f -y
+          echo "=== Instalando pacotes de temas e suas dependências ==="
+          apt install -y ./temas/*.deb
+
+          echo "=== Instalando pacotes do calamares-temas e suas dependências ==="
+          apt install -y ./calamares-temas/*.deb
 
       # 5. Gerar LOG de todos os pacotes instalados no sistema
       - name: Gerar log de pacotes instalados
@@ -59,7 +59,7 @@ jobs:
           echo "==================================================" >> /resultado/lista_de_pacotes_instalados.txt
           echo "" >> /resultado/lista_de_pacotes_instalados.txt
           
-          # Lista todos os pacotes com dpkg-l
+          # Lista todos os pacotes instalados
           dpkg -l >> /resultado/lista_de_pacotes_instalados.txt
 
       # 6. Estruturar o diretório Live da ISO e extrair Kernel/Initrd
