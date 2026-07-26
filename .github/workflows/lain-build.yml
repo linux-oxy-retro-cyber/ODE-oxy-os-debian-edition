@@ -41,16 +41,28 @@ jobs:
         run: |
           cd /build_root/oxys-pack/packges-beta/
 
-          echo "=== Instalando Prioridade (oxys-base.deb) ==="
-          apt-get install -y ./prioridade/oxys=base.deb || apt-get install -f -y
+          echo "=== Instalando todos os pacotes .deb da estrutura ==="
+          # Usa dpkg para tentar instalar todos os pacotes (.deb) independente de subpastas
+          dpkg -i ./prioridade/*.deb || true
+          dpkg -i ./temas/*.deb || true
+          dpkg -i ./calamares-temas/*.deb || true
 
-          echo "=== Instalando Temas (oxys-os.deb) ==="
-          apt-get install -y ./temas/oxys-os.deb || apt-get install -f -y
+          echo "=== Resolvendo dependências dos pacotes ==="
+          apt-get install -f -y
 
-          echo "=== Instalando Config Calamares (oxy-calamares-settings.deb) ==="
-          apt-get install -y ./calamares-temas/oxy-calamares-settings.deb || apt-get install -f -y
+      # 5. Gerar LOG de todos os pacotes instalados no sistema
+      - name: Gerar log de pacotes instalados
+        run: |
+          mkdir -p /resultado
+          echo "==================================================" > /resultado/lista_de_pacotes_instalados.txt
+          echo "       LOG DE PACOTES INSTALADOS NO OXYS OS       " >> /resultado/lista_de_pacotes_instalados.txt
+          echo "==================================================" >> /resultado/lista_de_pacotes_instalados.txt
+          echo "" >> /resultado/lista_de_pacotes_instalados.txt
+          
+          # Lista todos os pacotes com dpkg-l
+          dpkg -l >> /resultado/lista_de_pacotes_instalados.txt
 
-      # 5. Estruturar o diretório Live da ISO e extrair Kernel/Initrd
+      # 6. Estruturar o diretório Live da ISO e extrair Kernel/Initrd
       - name: Estruturar diretórios /live e /boot/grub
         run: |
           mkdir -p /iso_work/live
@@ -62,9 +74,9 @@ jobs:
 
           # Compacta a raiz em filesystem.squashfs dentro da pasta /live
           mksquashfs / /iso_work/live/filesystem.squashfs \
-            -e /iso_work /build_root /proc /sys /dev /run /tmp
+            -e /iso_work /build_root /proc /sys /dev /run /tmp /resultado
 
-      # 6. Injetar GRUB.cfg personalizado
+      # 7. Injetar GRUB.cfg personalizado
       - name: Configurar GRUB bootloader
         run: |
           cat <<'EOF' > /iso_work/boot/grub/grub.cfg
@@ -81,16 +93,17 @@ jobs:
           }
           EOF
 
-      # 7. Compilar a ISO Bootável
+      # 8. Compilar a ISO Bootável
       - name: Gerar imagem ISO final
         run: |
-          mkdir -p /resultado
           grub-mkrescue -o /resultado/oxys-os-debian-edition.iso /iso_work
 
-      # 8. Enviar ISO para download
-      - name: Disponibilizar ISO em Artefatos
+      # 9. Enviar ISO e o LOG para download
+      - name: Disponibilizar ISO e Log em Artefatos
         uses: actions/upload-artifact@v4
         with:
-          name: oxys-os-debian-edition-iso
-          path: /resultado/oxys-os-debian-edition.iso
+          name: oxys-os-build-resultado
+          path: |
+            /resultado/oxys-os-debian-edition.iso
+            /resultado/lista_de_pacotes_instalados.txt
           retention-days: 1
