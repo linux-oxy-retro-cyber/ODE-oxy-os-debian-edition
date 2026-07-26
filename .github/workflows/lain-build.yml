@@ -42,13 +42,13 @@ jobs:
           cd /build_root/oxys-pack/packges-beta/
 
           echo "=== Instalando pacotes de prioridade e suas dependências ==="
-          apt install -y ./prioridade/*.deb
+          apt-get install -y ./prioridade/*.deb
 
           echo "=== Instalando pacotes de temas e suas dependências ==="
-          apt install -y ./temas/*.deb
+          apt-get install -y ./temas/*.deb
 
           echo "=== Instalando pacotes do calamares-temas e suas dependências ==="
-          apt install -y ./calamares-temas/*.deb
+          apt-get install -y ./calamares-temas/*.deb
 
       # 5. Gerar LOG de todos os pacotes instalados no sistema
       - name: Gerar log de pacotes instalados
