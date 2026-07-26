@@ -1,128 +1,79 @@
-name: Lain Build - Geradora de ISO Oxys OS
+name: Nova Lain Build - Oxys OS (Debootstrap)
 
 on:
-  workflow_dispatch: # Botão manual na aba Actions
+  workflow_dispatch:
 
 jobs:
   build-iso:
     runs-on: ubuntu-latest
-    container:
-      image: debian:stable
-
     steps:
-      # 1. Configura repositórios do Debian e instala ca-certificates pra permitir o git clone via HTTPS
-      - name: Configurar fontes, repositórios Non-Free e Certificados
+      - name: Instalar ferramentas de Build
         run: |
-          export DEBIAN_FRONTEND=noninteractive
-          # Limpa o sources.list antigo para evitar avisos duplicados
-          > /etc/apt/sources.list
-          
-          # Configura os repositórios modernizados no formato DEB822
-          cat <<EOF > /etc/apt/sources.list.d/debian.sources
-          Types: deb
-          URIs: http://deb.debian.org/debian
-          Suites: stable stable-updates
-          Components: main contrib non-free non-free-firmware
-          Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+          sudo apt-get update
+          sudo apt-get install -y debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools
 
-          Types: deb
-          URIs: http://deb.debian.org/debian-security
-          Suites: stable-security
-          Components: main contrib non-free non-free-firmware
-          Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-          EOF
-
-          apt-get update -qq
-          apt-get install -y ca-certificates
-
-      # 2. Instalar dependências para compilar a ISO e o Kernel Live
-      - name: Instalar ferramentas de Build e Kernel
-        run: |
-          export DEBIAN_FRONTEND=noninteractive
-          apt-get install -y --no-install-recommends \
-            git wget xz-utils squashfs-tools xorriso \
-            grub-pc-bin grub-efi-amd64-bin mtools \
-            live-boot live-config linux-image-amd64 initramfs-tools \
-            firmware-linux-free firmware-linux-nonfree
-
-      # 3. Clonar o repositório do projeto
       - name: Clonar repositório
+        uses: actions/checkout@v4
+
+      - name: Construir sistema base com Debootstrap
         run: |
-          mkdir -p /build_root
-          cd /build_root
-          git clone https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition.git .
+          # Cria a pasta raiz limpa
+          sudo mkdir -p /oxys_root
+          # Baixa apenas o essencial (sem lixo do GitHub/Container)
+          sudo debootstrap --variant=minbase stable /oxys_root http://deb.debian.org/debian
 
-      # 4. Criar Chroot / Sistema do Oxys OS e aplicar pacotes .deb com força de sobrescrita
-      - name: Preparar chroot e instalar pacotes do Oxys OS
+      - name: Preparar chroot e Injetar pacotes
         run: |
-          export DEBIAN_FRONTEND=noninteractive
-          cd /build_root/oxys-pack/packges-beta/
-
-          DPKG_OPTS='-o Dpkg::Options::="--force-overwrite" -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"'
-
-          echo "=== Instalando pacotes de prioridade e suas dependências ==="
-          apt-get install $DPKG_OPTS -y ./prioridade/*.deb
-
-          echo "=== Instalando pacotes de temas e suas dependências ==="
-          apt-get install $DPKG_OPTS -y ./temas/*.deb
-
-          echo "=== Instalando pacotes do calamares-temas e suas dependências ==="
-          apt-get install $DPKG_OPTS -y ./calamares-temas/*.deb
-
-      # 5. Gerar LOG de todos os pacotes instalados no sistema
-      - name: Gerar log de pacotes instalados
-        run: |
-          mkdir -p /resultado
-          echo "==================================================" > /resultado/lista_de_pacotes_instalados.txt
-          echo "       LOG DE PACOTES INSTALADOS NO OXYS OS       " >> /resultado/lista_de_pacotes_instalados.txt
-          echo "==================================================" >> /resultado/lista_de_pacotes_instalados.txt
-          echo "" >> /resultado/lista_de_pacotes_instalados.txt
+          # Prepara o ambiente para rodar dentro da raiz nova
+          sudo cp /etc/resolv.conf /oxys_root/etc/resolv.conf
+          sudo mount --bind /proc /oxys_root/proc
+          sudo mount --bind /sys /oxys_root/sys
+          sudo mount --bind /dev /oxys_root/dev
           
-          # Lista todos os pacotes instalados
-          dpkg -l >> /resultado/lista_de_pacotes_instalados.txt
+          # Copia seus pacotes customizados para dentro do sistema novo
+          sudo mkdir -p /oxys_root/tmp/packages
+          sudo cp -r oxys-pack/packges-beta/*/*.deb /oxys_root/tmp/packages/
+          
+          # Instala os pacotes com autoridade (o dpkg respeitará os Replaces/Breaks do seu control)
+          sudo chroot /oxys_root /bin/bash -c "dpkg -i /tmp/packages/*.deb"
+          
+          # Ajusta dependências caso algo tenha faltado
+          sudo chroot /oxys_root /bin/bash -c "apt-get install -f -y"
 
-      # 6. Estruturar o diretório Live da ISO e extrair Kernel/Initrd
-      - name: Estruturar diretórios /live e /boot/grub
+      - name: Limpeza e Finalização do Sistema
         run: |
-          mkdir -p /iso_work/live
-          mkdir -p /iso_work/boot/grub
+          # Remove os arquivos temporários dos pacotes
+          sudo rm -rf /oxys_root/tmp/packages
+          sudo rm -rf /oxys_root/var/lib/apt/lists/*
+          
+          # Garante que o diretório live exista
+          sudo mkdir -p /oxys_root/live
 
-          # Copia o vmlinuz e initrd mais recentes gerados no sistema para o /live
-          cp -f /vmlinuz /iso_work/live/vmlinuz 2>/dev/null || cp -f $(ls -t /boot/vmlinuz-* | head -n 1) /iso_work/live/vmlinuz
-          cp -f /initrd.img /iso_work/live/initrd.img 2>/dev/null || cp -f $(ls -t /boot/initrd.img-* | head -n 1) /iso_work/live/initrd.img
-
-          # Compacta a raiz em filesystem.squashfs dentro da pasta /live
-          mksquashfs / /iso_work/live/filesystem.squashfs \
-            -e /iso_work /build_root /proc /sys /dev /run /tmp /resultado
-
-      # 7. Injetar GRUB.cfg personalizado
-      - name: Configurar GRUB bootloader
+      - name: Gerar SquashFS e ISO
         run: |
-          cat <<'EOF' > /iso_work/boot/grub/grub.cfg
-          set default=0
-          set timeout=3
+          # Estrutura de pastas da ISO
+          mkdir -p iso_work/boot/grub
+          
+          # Compacta a raiz limpa (apenas o que está em /oxys_root)
+          sudo mksquashfs /oxys_root iso_work/live/filesystem.squashfs -comp xz
+          
+          # Copia kernel/initrd do sistema de build (ou você pode copiar do seu pacote oxy-base se tiver o kernel lá)
+          sudo cp /boot/vmlinuz-* /iso_work/live/vmlinuz 2>/dev/null || true
+          sudo cp /boot/initrd.img-* /iso_work/live/initrd.img 2>/dev/null || true
 
-          insmod ext2
-          insmod vbe
-          insmod gfxterm
-
-          menuentry "Oxys Debian Edition (Live SquashFS)" {
+          # Cria o GRUB config
+          cat <<EOF > iso_work/boot/grub/grub.cfg
+          menuentry "Oxys OS (Live)" {
               linux /live/vmlinuz boot=live
               initrd /live/initrd.img
           }
           EOF
+          
+          # Gera a ISO final
+          grub-mkrescue -o oxys-os.iso iso_work
 
-      # 8. Compilar a ISO Bootável
-      - name: Gerar imagem ISO final
-        run: |
-          grub-mkrescue -o /resultado/oxys-os-debian-edition.iso /iso_work
-
-      # 9. Enviar ISO e o LOG para download
-      - name: Disponibilizar ISO e Log em Artefatos
+      - name: Upload da ISO
         uses: actions/upload-artifact@v4
         with:
-          name: oxys-os-build-resultado
-          path: |
-            /resultado/oxys-os-debian-edition.iso
-            /resultado/lista_de_pacotes_instalados.txt
-          retention-days: 1
+          name: oxys-os-iso
+          path: oxys-os.iso
