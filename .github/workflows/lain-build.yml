@@ -1,86 +1,125 @@
-name: Lain Build - Full Oxys OS
-
-on:
-  workflow_dispatch:
+name: Lain Build - Oxys OS Professional Edition
+on: [workflow_dispatch]
 
 jobs:
-  build-iso:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Instalar ferramentas
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools git
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with: { path: 'temp_repo' }
 
-      - name: Criar Raiz via Container Debian
+      - name: Build Oxys OS Live
         run: |
-          git clone --depth 1 https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition.git temp_repo
+          set -euxo pipefail
+
+          # 1. Instalação de dependências de Build
+          sudo apt-get update && sudo apt-get install -y \
+            docker.io squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools git
+
+          # 2. Setup do RootFS (Debian Base)
           docker pull debian:stable-slim
-          docker create --name oxys-base debian:stable-slim
+          container_id=$(docker create debian:stable-slim)
           sudo mkdir -p /oxys_root
-          docker export oxys-base | sudo tar -x -C /oxys_root
-          docker rm oxys-base
+          docker export "$container_id" | sudo tar -x -C /oxys_root
+          docker rm "$container_id"
 
-      - name: Instalar Kit Ante Erros e Pacotes
-        run: |
+          # 3. Função de Cleanup para mounts
+          cleanup() {
+            set +e
+            for dir in run dev/pts dev sys proc; do 
+              sudo umount -l "/oxys_root/$dir" 2>/dev/null || true
+            done
+          }
+          trap cleanup EXIT
+
+          # 4. Preparação do Chroot
+          for dir in proc sys dev dev/pts run; do 
+            sudo mkdir -p "/oxys_root/$dir"
+            sudo mount --bind "/$dir" "/oxys_root/$dir"
+          done
           sudo cp /etc/resolv.conf /oxys_root/etc/resolv.conf
-          sudo mount --bind /proc /oxys_root/proc
-          sudo mount --bind /sys /oxys_root/sys
-          sudo mount --bind /dev /oxys_root/dev
-          
-          sudo chroot /oxys_root /bin/bash -c "apt-get update && apt-get install -y grub-pc linux-image-amd64 live-boot live-config initramfs-tools systemd-sysv apt-utils dialog locales lsb-release"
-          
-          sudo mkdir -p /oxys_root/tmp/packages
-          sudo cp temp_repo/oxys-pack/packges-beta/calamares-temas/oxy-calamares-settings.deb /oxys_root/tmp/packages/
-          sudo cp temp_repo/oxys-pack/packges-beta/prioridade/oxys-base-config.deb /oxys_root/tmp/packages/
-          sudo cp temp_repo/oxys-pack/packges-beta/temas/oxys-base.deb /oxys_root/tmp/packages/
-          
-          sudo chroot /oxys_root /bin/bash -c "apt-get install -y /tmp/packages/*.deb && apt-get clean && rm -rf /tmp/packages/*"
 
-      - name: Aplicar Configuracoes Lain
-        run: |
-          echo "oxys-os" | sudo tee /oxys_root/etc/hostname
+          # 5. Instalação e Configuração
+          sudo chroot /oxys_root /bin/bash -c "
+            apt-get update
+            # Instalação de pacotes essenciais
+            apt-get install -y --no-install-recommends \
+              linux-image-amd64 live-boot live-config systemd-sysv \
+              apt-utils locales kmod sudo dbus grub-pc grub-efi-amd64-bin \
+              initramfs-tools locales
+            
+            # Instalação de pacotes locais (Oxys)
+            mkdir -p /tmp/packages
+          "
           
-          VER=$(cat /oxys_root/etc/debian_version | cut -d. -f1)
-          NOME=$([ "$VER" == "13" ] && echo "Oxys 2.0" || echo "Oxys 1")
-          sudo tee /oxys_root/etc/os-release <<EOF
-          PRETTY_NAME="$NOME"
-          NAME="$NOME"
-          VERSION_ID="$VER"
-          VERSION="$VER"
-          ID=oxys
-          EOF
+          # Copia pacotes locais com validação
+          find temp_repo -type f -name "*.deb" -exec sudo cp {} /oxys_root/tmp/packages/ \;
+          if [ -z "$(ls -A /oxys_root/tmp/packages/)" ]; then echo "Erro: Nenhum pacote .deb encontrado"; exit 1; fi
           
-          sudo tee /oxys_root/etc/default/grub <<EOF
-          GRUB_DEFAULT=0
-          GRUB_TIMEOUT=5
-          GRUB_DISTRIBUTOR="Oxys OS"
-          GRUB_CMDLINE_LINUX_DEFAULT="quiet splash boot=live"
-          EOF
-          
-          echo "boot=live" | sudo tee -a /oxys_root/etc/initramfs-tools/modules
-          sudo chroot /oxys_root /bin/bash -c "update-initramfs -u"
+          sudo chroot /oxys_root /bin/bash -c "
+            dpkg -i /tmp/packages/*.deb || apt-get install -fy
+            apt-get clean
+            rm -rf /var/lib/apt/lists/* /tmp/packages/*
+          "
 
-      - name: Gerar ISO
-        run: |
-          mkdir -p iso_work/live
-          sudo mksquashfs /oxys_root iso_work/live/filesystem.squashfs -comp xz -e dev proc sys
-          
-          sudo cp /oxys_root/boot/vmlinuz-* iso_work/live/vmlinuz
-          sudo cp /oxys_root/boot/initrd.img-* iso_work/live/initrd.img
+          # 6. Configuração do Sistema
+          sudo chroot /oxys_root /bin/bash -c "
+            echo 'oxys-os' > /etc/hostname
+            echo '127.0.0.1 localhost oxys-os' > /etc/hosts
+            echo 'pt_BR.UTF-8 UTF-8' > /etc/locale.gen
+            locale-gen
+            
+            # Ajuste profissional de os-release
+            sed -i 's/^NAME=.*/NAME=\"Oxys OS\"/' /etc/os-release
+            echo 'PRETTY_NAME=\"Oxys OS\"' >> /etc/os-release
+            
+            # Geração de initramfs robusta
+            update-initramfs -u -k all
+          "
 
-          mkdir -p iso_work/boot/grub
-          cat <<EOF > iso_work/boot/grub/grub.cfg
-          menuentry "Oxys OS (Live)" {
-              linux /live/vmlinuz boot=live
-              initrd /live/initrd.img
+          # 7. Geração do SquashFS (Cleanup agressivo)
+          sudo mksquashfs /oxys_root filesystem.squashfs -comp xz -noappend \
+            -e proc sys dev run tmp mnt media lost+found var/cache/apt var/log
+
+          # 8. Estrutura ISO e Validação
+          mkdir -p iso_root/live iso_root/boot/grub
+          sudo mv filesystem.squashfs iso_root/live/
+          
+          # Seleção de Kernel/Initrd (validação de existência)
+          k_ver=$(ls -v /oxys_root/boot/vmlinuz-* | tail -n 1 | cut -d- -f2-)
+          if [ ! -f "/oxys_root/boot/vmlinuz-$k_ver" ]; then echo "Kernel não encontrado"; exit 1; fi
+          sudo cp "/oxys_root/boot/vmlinuz-$k_ver" iso_root/live/vmlinuz
+          sudo cp "/oxys_root/boot/initrd.img-$k_ver" iso_root/live/initrd.img
+
+          # 9. Configuração Profissional GRUB
+          cat <<EOF > iso_root/boot/grub/grub.cfg
+          set timeout=5
+          set default=0
+          menuentry 'Oxys OS Live (BIOS/UEFI)' {
+            linux /live/vmlinuz boot=live components quiet splash
+            initrd /live/initrd.img
           }
           EOF
-          
-          sudo grub-mkrescue -o oxys-os.iso iso_work
 
-      - name: Upload
+          # 10. Geração de Manifestos e ISO
+          sudo chroot /oxys_root dpkg-query -W -f='\${Package} \${Version}\n' > filesystem.manifest
+          sudo mv filesystem.manifest iso_root/live/
+          
+          # Criação da ISO (El Torito/Hybrid)
+          grub-mkrescue -o oxys-os.iso iso_root \
+            -- -checksum_algorithm_iso md5,sha256 \
+            -volid "OXYS_OS" -publisher "Oxys Team"
+
+          # 11. Validação Final
+          if [ ! -f "oxys-os.iso" ]; then echo "Erro na criação da ISO"; exit 1; fi
+          sha256sum oxys-os.iso > checksum.txt
+          cat checksum.txt
+
+      - name: Upload ISO
         uses: actions/upload-artifact@v4
         with:
           name: oxys-os-iso
-          path: oxys-os.iso
+          path: |
+            oxys-os.iso
+            checksum.txt
