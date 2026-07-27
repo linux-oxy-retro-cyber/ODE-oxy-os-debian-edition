@@ -1,59 +1,50 @@
-name: Katana Testadora de Pacotes do Oxys OS
+name: Katana Auditora de Pacotes do Oxys OS
 
 on:
-  workflow_dispatch: # Permite rodar o teste manualmente na aba Actions
+  workflow_dispatch:
 
 jobs:
-  testar-e-compactar:
+  auditar-pacotes:
     runs-on: ubuntu-latest
     container:
-      image: debian:stable # Roda dentro de um container com a versão Debian Estável mais recente
+      image: debian:stable
 
     steps:
-      # 1. Preparar os utilitários básicos do Debian
       - name: Preparar ambiente Debian
         run: |
           apt-get update
-          apt-get install -y git wget apt-utils systemd xz-utils squashfs-tools
+          apt-get install -y git wget apt-utils
 
-      # 2. Baixar os arquivos do repositório
       - name: Clonar repositório
         run: |
           mkdir -p /teste_packages
           cd /teste_packages
           git clone https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition.git .
 
-      # 3. Dar apt install direto nos arquivos .deb (Prioridade -> Temas -> Calamares)
-      - name: Testar e instalar pacotes .deb no sistema
+      - name: Executar auditoria de instalação
         run: |
+          LOG_FILE="/tmp/install_log.txt"
           cd /teste_packages/oxys-pack/packges-beta/
+          
+          echo "=== INÍCIO DA AUDITORIA $(date) ===" > $LOG_FILE
+          
+          echo -e "\n\n--- 1. Instalando Pacote: oxys-base.deb ---" >> $LOG_FILE
+          apt-get install -y ./prioridade/oxys-base.deb >> $LOG_FILE 2>&1 || echo "STATUS: FALHA AO INSTALAR OXY-BASE" >> $LOG_FILE
+          
+          echo -e "\n\n--- 2. Instalando Pacote: oxys-os.deb ---" >> $LOG_FILE
+          apt-get install -y ./temas/oxys-os.deb >> $LOG_FILE 2>&1 || echo "STATUS: FALHA AO INSTALAR OXYS-OS" >> $LOG_FILE
+          
+          echo -e "\n\n--- 3. Instalando Pacote: oxy-calamares-settings.deb ---" >> $LOG_FILE
+          apt-get install -y ./calamares-temas/oxy-calamares-settings.deb >> $LOG_FILE 2>&1 || echo "STATUS: FALHA AO INSTALAR CALAMARES-SETTINGS" >> $LOG_FILE
+          
+          echo -e "\n\n--- 4. Tentativa de fix de dependências (apt-get -f install) ---" >> $LOG_FILE
+          apt-get install -f -y >> $LOG_FILE 2>&1 || echo "STATUS: FALHA NA TENTATIVA DE FIX" >> $LOG_FILE
+          
+          echo -e "\n\n=== FIM DA AUDITORIA $(date) ===" >> $LOG_FILE
 
-          echo "=== 1. Instalando Pacote de Prioridade (oxys-base.deb) ==="
-          apt-get install -y ./prioridade/oxys=base.deb || apt-get install -f -y
-
-          echo "=== 2. Instalando Pacote de Temas (oxys-os.deb) ==="
-          apt-get install -y ./temas/oxys-os.deb || apt-get install -f -y
-
-          echo "=== 3. Instalando Pacote Config do Calamares (oxy-calamares-settings.deb) ==="
-          apt-get install -y ./calamares-temas/oxy-calamares-settings.deb || apt-get install -f -y
-
-      # 4. Compactar o / (raiz inteira do sistema) com os pacotes aplicados
-      - name: Compactar raiz do sistema (/)
-        run: |
-          mkdir -p /resultado
-          tar -cJf /resultado/oxys-os-sistema-testado.tar.xz \
-            --exclude='/resultado' \
-            --exclude='/proc' \
-            --exclude='/sys' \
-            --exclude='/dev' \
-            --exclude='/run' \
-            --exclude='/tmp' \
-            --exclude='/teste_packages' /
-
-      # 5. Disponibilizar o arquivo compactado para download
-      - name: Enviar arquivo compactado do sistema para download
+      - name: Enviar relatório de log
         uses: actions/upload-artifact@v4
         with:
-          name: oxys-os-full-rootfs
-          path: /resultado/oxys-os-sistema-testado.tar.xz
-          retention-days: 1 # Expira em 1 dia
+          name: relatorio-instalacao
+          path: /tmp/install_log.txt
+          retention-days: 1
