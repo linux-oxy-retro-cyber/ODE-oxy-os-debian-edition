@@ -1,5 +1,0 @@
-#antes de rodar verifique se os repo non-free e non-free-firmware estao ativa 
-# 1. Informa ao sistema todos os pacotes que estão marcados na sua lista
-sudo dpkg --set-selections < oxys-lista_organizada_apps.txt
-# 2. Manda o apt baixar e instalar tudo de uma vez só
-sudo apt-get dselect-upgrade -y
