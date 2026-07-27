@@ -29,13 +29,13 @@ jobs:
           echo "=== INÍCIO DA AUDITORIA $(date) ===" > $LOG_FILE
           
           echo -e "\n\n--- 1. Instalando Pacote: oxys-base.deb ---" >> $LOG_FILE
-          apt-get install -y ./prioridade/oxys-base.deb >> $LOG_FILE 2>&1 || echo "STATUS: FALHA AO INSTALAR OXY-BASE" >> $LOG_FILE
+          apt-get install -y ./prioridade/*.deb >> $LOG_FILE 2>&1 || echo "STATUS: FALHA AO INSTALAR OXY-BASE" >> $LOG_FILE
           
           echo -e "\n\n--- 2. Instalando Pacote: oxys-os.deb ---" >> $LOG_FILE
-          apt-get install -y ./temas/oxys-os.deb >> $LOG_FILE 2>&1 || echo "STATUS: FALHA AO INSTALAR OXYS-OS" >> $LOG_FILE
+          apt-get install -y ./temas/*.deb >> $LOG_FILE 2>&1 || echo "STATUS: FALHA AO INSTALAR OXYS-OS" >> $LOG_FILE
           
           echo -e "\n\n--- 3. Instalando Pacote: oxy-calamares-settings.deb ---" >> $LOG_FILE
-          apt-get install -y ./calamares-temas/oxy-calamares-settings.deb >> $LOG_FILE 2>&1 || echo "STATUS: FALHA AO INSTALAR CALAMARES-SETTINGS" >> $LOG_FILE
+          apt-get install -y ./calamares-temas/oxy*.deb >> $LOG_FILE 2>&1 || echo "STATUS: FALHA AO INSTALAR CALAMARES-SETTINGS" >> $LOG_FILE
           
           echo -e "\n\n--- 4. Tentativa de fix de dependências (apt-get -f install) ---" >> $LOG_FILE
           apt-get install -f -y >> $LOG_FILE 2>&1 || echo "STATUS: FALHA NA TENTATIVA DE FIX" >> $LOG_FILE
