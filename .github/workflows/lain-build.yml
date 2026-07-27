@@ -15,10 +15,9 @@ jobs:
       - name: Criar Raiz via Container Debian
         run: |
           git clone --depth 1 https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition.git temp_repo
-          # Puxa o Debian, cria o container e exporta o sistema para /oxys_root
           docker pull debian:stable-slim
           docker create --name oxys-base debian:stable-slim
-          mkdir -p /oxys_root
+          sudo mkdir -p /oxys_root
           docker export oxys-base | sudo tar -x -C /oxys_root
           docker rm oxys-base
 
@@ -29,16 +28,13 @@ jobs:
           sudo mount --bind /sys /oxys_root/sys
           sudo mount --bind /dev /oxys_root/dev
           
-          # Garante dependências mínimas para o Live no Debian base
           sudo chroot /oxys_root /bin/bash -c "apt-get update && apt-get install -y grub-pc linux-image-amd64 live-boot live-config initramfs-tools systemd-sysv apt-utils dialog locales lsb-release"
           
-          # Copia os 3 pacotes
           sudo mkdir -p /oxys_root/tmp/packages
           sudo cp temp_repo/oxys-pack/packges-beta/calamares-temas/oxy-calamares-settings.deb /oxys_root/tmp/packages/
           sudo cp temp_repo/oxys-pack/packges-beta/prioridade/oxys-base-config.deb /oxys_root/tmp/packages/
           sudo cp temp_repo/oxys-pack/packges-beta/temas/oxys-base.deb /oxys_root/tmp/packages/
           
-          # Instala os .deb e limpa
           sudo chroot /oxys_root /bin/bash -c "apt-get install -y /tmp/packages/*.deb && apt-get clean && rm -rf /tmp/packages/*"
 
       - name: Aplicar Configuracoes Lain
@@ -81,7 +77,7 @@ jobs:
           }
           EOF
           
-          grub-mkrescue -o oxys-os.iso iso_work
+          sudo grub-mkrescue -o oxys-os.iso iso_work
 
       - name: Upload
         uses: actions/upload-artifact@v4
