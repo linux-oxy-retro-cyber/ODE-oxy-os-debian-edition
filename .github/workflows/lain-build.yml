@@ -1,4 +1,4 @@
-name: Lain Build - Full Oxys OS
+name: Lain Build - Full Oxys OS (Container)
 
 on:
   workflow_dispatch:
@@ -6,64 +6,56 @@ on:
 jobs:
   build-iso:
     runs-on: ubuntu-latest
+    container:
+      image: debian:stable
+      options: --privileged
     steps:
       - name: Instalar ferramentas
         run: |
-          sudo apt-get update
-          sudo apt-get install -y debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools git
+          apt-get update
+          apt-get install -y git squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools live-boot live-config initramfs-tools wget
 
       - name: Clonar e Preparar
         run: |
-          # Clona o repositório completo para pegar os pacotes
           git clone --depth 1 https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition.git temp_repo
-          
-          # Cria a estrutura raiz
-          sudo mkdir -p /oxys_root
-          sudo debootstrap --variant=minbase stable /oxys_root http://deb.debian.org/debian
+          # Prepara a estrutura de trabalho na raiz do container
+          mkdir -p /oxys_root
+          # Vamos copiar a estrutura atual do container para o nosso alvo
+          # Isso é muito mais seguro e rápido que debootstrap
+          cp -a /bin /boot /dev /etc /home /lib /lib64 /media /mnt /opt /proc /root /run /sbin /srv /sys /tmp /usr /var /oxys_root/ || true
 
       - name: Instalar pacotes
         run: |
-          sudo cp /etc/resolv.conf /oxys_root/etc/resolv.conf
-          sudo mount --bind /proc /oxys_root/proc
-          sudo mount --bind /sys /oxys_root/sys
-          sudo mount --bind /dev /oxys_root/dev
-          
           # Copia apenas os pacotes que você pediu
-          sudo mkdir -p /oxys_root/tmp/packages
-          sudo cp temp_repo/oxys-pack/packges-beta/calamares-temas/oxy-calamares-settings.deb /oxys_root/tmp/packages/
-          sudo cp temp_repo/oxys-pack/packges-beta/prioridade/oxys-base-config.deb /oxys_root/tmp/packages/
-          sudo cp temp_repo/oxys-pack/packges-beta/temas/oxys-base.deb /oxys_root/tmp/packages/
+          mkdir -p /tmp/packages
+          cp temp_repo/oxys-pack/packges-beta/calamares-temas/oxy-calamares-settings.deb /tmp/packages/
+          cp temp_repo/oxys-pack/packges-beta/prioridade/oxys-base-config.deb /tmp/packages/
+          cp temp_repo/oxys-pack/packges-beta/temas/oxys-base.deb /tmp/packages/
           
-          # Instala
-          sudo chroot /oxys_root /bin/bash -c "apt-get update && apt-get install -y /tmp/packages/*.deb"
+          # Instala pacotes no sistema raiz (o container já é o sistema)
+          dpkg -i /tmp/packages/*.deb || apt-get install -f -y
 
       - name: Aplicar Configuracoes Lain
         run: |
           # 1. Hostname
-          echo "oxys-os" | sudo tee /oxys_root/etc/hostname
-          echo "127.0.0.1 localhost oxys-os" | sudo tee /oxys_root/etc/hosts
+          echo "oxys-os" > /etc/hostname
+          echo "127.0.0.1 localhost oxys-os" > /etc/hosts
           
           # 2. Logica OS Release Dinamica
-          VER=$(cat /oxys_root/etc/debian_version | cut -d. -f1)
-          if [ "$VER" == "12" ]; then
-             NOME="Oxys 1"
-             VER_ID="1"
-          else
-             NOME="Oxys 2.0"
-             VER_ID="2.0"
-          fi
+          VER=$(cat /etc/debian_version | cut -d. -f1)
+          NOME=$([ "$VER" == "13" ] && echo "Oxys 2.0" || echo "Oxys 1")
           
-          sudo tee /oxys_root/etc/os-release <<EOF
+          tee /etc/os-release <<EOF
           PRETTY_NAME="$NOME"
           NAME="$NOME"
-          VERSION_ID="$VER_ID"
-          VERSION="$VER_ID"
+          VERSION_ID="$VER"
+          VERSION="$VER"
           ID=oxys
           ID_LIKE=debian
           EOF
           
           # 3. Configurar Grub e Force Boot Live
-          sudo tee /oxys_root/etc/default/grub <<EOF
+          tee /etc/default/grub <<EOF
           GRUB_DEFAULT=0
           GRUB_TIMEOUT=5
           GRUB_DISTRIBUTOR="Oxys OS"
@@ -72,16 +64,17 @@ jobs:
           EOF
           
           # 4. Forçar boot=live no initramfs
-          echo "boot=live" | sudo tee -a /oxys_root/etc/initramfs-tools/modules
-          sudo chroot /oxys_root /bin/bash -c "update-initramfs -u"
+          echo "boot=live" >> /etc/initramfs-tools/modules
+          update-initramfs -u
 
       - name: Gerar ISO
         run: |
-          mkdir -p iso_work/boot/grub
-          sudo mksquashfs /oxys_root iso_work/live/filesystem.squashfs -comp xz
+          mkdir -p iso_work/boot/grub iso_work/live
+          # Mover o sistema configurado para o squashfs
+          mksquashfs / iso_work/live/filesystem.squashfs -e iso_work temp_repo tmp dev proc sys run
           
-          sudo cp /oxys_root/boot/vmlinuz-* iso_work/live/vmlinuz 2>/dev/null || sudo cp /boot/vmlinuz-* iso_work/live/vmlinuz
-          sudo cp /oxys_root/boot/initrd.img-* iso_work/live/initrd.img 2>/dev/null || sudo cp /boot/initrd.img-* iso_work/live/initrd.img
+          cp /boot/vmlinuz-* iso_work/live/vmlinuz
+          cp /boot/initrd.img-* iso_work/live/initrd.img
 
           cat <<EOF > iso_work/boot/grub/grub.cfg
           menuentry "Oxys OS (Live)" {
