@@ -1,16 +1,16 @@
-name: Katana Build - Debug de Instalação
+name: katana Build - Instalação de Pacotes Oxys OS
 
 on:
-  workflow_dispatch: # Botão manual na aba Actions
+  workflow_dispatch:
 
 jobs:
-  build-debug:
+  build-packages:
     runs-on: ubuntu-latest
     container:
       image: debian:stable
 
     steps:
-      # 1. Configura repositórios do Debian
+      # 1. Configura repositórios
       - name: Configurar fontes e repositórios Non-Free
         run: |
           cat <<EOF > /etc/apt/sources.list
@@ -20,43 +20,32 @@ jobs:
           EOF
           apt-get update
 
-      # 2. Instalar dependências básicas
-      - name: Instalar ferramentas básicas
+      # 2. Instalar ferramentas básicas de sistema
+      - name: Instalar ferramentas de build
         run: |
           apt-get install -y git wget
 
-      # 3. Clonar o repositório do projeto
+      # 3. Clonar o repositório
       - name: Clonar repositório
         run: |
           mkdir -p /build_root
           cd /build_root
           git clone https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition.git .
 
-      # 4. Instalar pacotes do Oxys OS e GERAR LOGS
-      - name: Instalar pacotes e capturar logs
+      # 4. Instalação por etapas (Prioridade)
+      - name: Instalar pacotes de prioridade
         run: |
-          mkdir -p /logs
-          cd /build_root/oxys-pack/packges-beta/
+          cd /build_root/oxys-pack/packges-beta/prioridade/
+          apt-get install -y ./*.deb || apt-get install -f -y
 
-          # Função para logar a instalação
-          log_install() {
-            local nome=$1
-            local pasta=$2
-            echo "=== Instalando $nome ==="
-            # Instala e joga tudo (stdout e stderr) para um arquivo de log
-            apt-get install -y ./$pasta/*.deb > /logs/$nome.log 2>&1
-            # Salva o status (0=sucesso, outro=erro) para checagem rápida
-            echo $? > /logs/$nome.status
-          }
+      # 5. Instalação por etapas (Temas)
+      - name: Instalar pacotes de temas
+        run: |
+          cd /build_root/oxys-pack/packges-beta/temas/
+          apt-get install -y ./*.deb || apt-get install -f -y
 
-          log_install "prioridade" "prioridade"
-          log_install "temas" "temas"
-          log_install "calamares" "calamares-temas"
-
-      # 5. Disponibilizar apenas os LOGS em Artefatos
-      - name: Disponibilizar Logs em Artefatos
-        uses: actions/upload-artifact@v4
-        with:
-          name: katana-debug-logs
-          path: /logs/*
-          retention-days: 1
+      # 6. Instalação por etapas (Calamares)
+      - name: Instalar pacotes do Calamares
+        run: |
+          cd /build_root/oxys-pack/packges-beta/calamares-temas/
+          apt-get install -y ./*.deb || apt-get install -f -y
