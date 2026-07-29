@@ -1,0 +1,62 @@
+name: Katana Build - Debug de Instalação
+
+on:
+  workflow_dispatch: # Botão manual na aba Actions
+
+jobs:
+  build-debug:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:stable
+
+    steps:
+      # 1. Configura repositórios do Debian
+      - name: Configurar fontes e repositórios Non-Free
+        run: |
+          cat <<EOF > /etc/apt/sources.list
+          deb http://deb.debian.org/debian stable main contrib non-free non-free-firmware
+          deb http://deb.debian.org/debian-security stable-security main contrib non-free non-free-firmware
+          deb http://deb.debian.org/debian stable-updates main contrib non-free non-free-firmware
+          EOF
+          apt-get update
+
+      # 2. Instalar dependências básicas
+      - name: Instalar ferramentas básicas
+        run: |
+          apt-get install -y git wget
+
+      # 3. Clonar o repositório do projeto
+      - name: Clonar repositório
+        run: |
+          mkdir -p /build_root
+          cd /build_root
+          git clone https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition.git .
+
+      # 4. Instalar pacotes do Oxys OS e GERAR LOGS
+      - name: Instalar pacotes e capturar logs
+        run: |
+          mkdir -p /logs
+          cd /build_root/oxys-pack/packges-beta/
+
+          # Função para logar a instalação
+          log_install() {
+            local nome=$1
+            local pasta=$2
+            echo "=== Instalando $nome ==="
+            # Instala e joga tudo (stdout e stderr) para um arquivo de log
+            apt-get install -y ./$pasta/*.deb > /logs/$nome.log 2>&1
+            # Salva o status (0=sucesso, outro=erro) para checagem rápida
+            echo $? > /logs/$nome.status
+          }
+
+          log_install "prioridade" "prioridade"
+          log_install "temas" "temas"
+          log_install "calamares" "calamares-temas"
+
+      # 5. Disponibilizar apenas os LOGS em Artefatos
+      - name: Disponibilizar Logs em Artefatos
+        uses: actions/upload-artifact@v4
+        with:
+          name: katana-debug-logs
+          path: /logs/*
+          retention-days: 1
