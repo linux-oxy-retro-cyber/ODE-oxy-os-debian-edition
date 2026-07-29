@@ -36,7 +36,7 @@ jobs:
       - name: Instalar pacotes de prioridade
         run: |
           cd /build_root/oxys-pack/packges-beta/prioridade/
-          apt-get install -y ./*.deb || apt-get install -f -y
+          dpkg -i --force-overwrite ./oxys-base.deb && apt-get install -f -y
 
       # 5. Instalação por etapas (Temas)
       - name: Instalar pacotes de temas
