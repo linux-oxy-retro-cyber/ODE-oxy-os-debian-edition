@@ -70,7 +70,7 @@ Para garantir compatibilidade imediata de hardware (como placas Wi-Fi, Bluetooth
 ## Trabalhando
 **Oxys OS**: Trabalhando em um **meta pacote** com um **pos instalaçao** seguido de personalizaçoes de **papel de parede, calamares,fastfetch** e instalaçao de varios app e traz o executavel do fastfeth pois ainda nao consegui embutilo no **posinst** e nem no **Control**. e vale lembrar que este meta pacote nao traz drives...
 
-**OxyohanOS**: Trabalhando no **calamares** e **erros**
+**OxyohanOS**: Projeto paralizado
 
 ------
 
