@@ -43,18 +43,35 @@ jobs:
           echo "=== Instalando Config Calamares (oxy-calamares-settings.deb) ==="
           apt-get install -y ./calamares-temas/*.deb || apt-get install -f -y
           cd /build_root/oxys-pack
-          cp /build_root/oxys-pack/sistema/etc/os-release /etc
-          cp /build_root/oxys-pack/sistema/etc/default/* /etc/default
-          cp /build_root/oxys-pack/backgrounds/oxys /usr/share/backgrounds
-          cp /build_root/oxys-pack/slim/oxys /usr/share/slim/themes
-          cp /build_root/oxys-pack/sistema/etc/slim.conf /etc
-          cp /build_root/oxys-pack/sistema/etc/skel /etc
-          mkdir /etc/xdg
-          cp /build_root/oxys-pack/sistema/etc/xdg /etc
-          cp /build_root/oxys-pack/sistema/etc/os-release /usr/lib
-          cp /build_root/oxys-pack/sistema/usr/bin/fastfetch /usr/bin
-          mkdir -p /dev /proc /sys /run /mnt /media /tmp
-          rm -rf /__w /__e /__t /github
+            # Copiar arquivos de configuração do sistema
+            cp /build_root/oxys-pack/sistema/etc/os-release /etc
+            cp /build_root/oxys-pack/sistema/etc/os-release /usr/lib
+            cp /build_root/oxys-pack/sistema/etc/default/* /etc/default
+            cp /build_root/oxys-pack/sistema/etc/slim.conf /etc
+            
+            # Copiar temas e papéis de parede (-r para pastas)
+            mkdir -p /usr/share/backgrounds /usr/share/slim/themes
+            cp -r /build_root/oxys-pack/backgrounds/oxys /usr/share/backgrounds/
+            cp -r /build_root/oxys-pack/slim/oxys /usr/share/slim/themes/
+            
+            # Copiar skel e xdg recursivamente (preservando permissões e estrutura)
+            cp -r /build_root/oxys-pack/sistema/etc/skel/. /etc/skel/
+            cp -r /build_root/oxys-pack/sistema/etc/xdg/. /etc/xdg/
+            
+            # Copiar o executável do fastfetch e DAR PERMISSÃO DE EXECUÇÃO (chmod)
+            cp /build_root/oxys-pack/sistema/usr/bin/fastfetch /usr/bin/
+            chmod +x /usr/bin/fastfetch
+            
+            # Garantir permissões corretas no /etc/skel para novos usuários
+            chmod -R 755 /etc/skel
+            
+            # Garantir os pontos de montagem reais do Linux (VAZIOS)
+            mkdir -p /dev /proc /sys /run /mnt /media /tmp
+            chmod 1777 /tmp  # /tmp precisa da permissão 1777 para o sistema funcionar liso!
+            
+            # Limpar vestígios da automação do Docker/GitHub Actions
+            rm -rf /__w /__e /__t /github
+         
       # 5. Estruturar o diretório Live da ISO e extrair Kernel/Initrd
       - name: Estruturar diretórios /live e /boot/grub
         run: |
