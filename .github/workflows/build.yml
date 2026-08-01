@@ -39,10 +39,16 @@ jobs:
           cd /build_root/oxys-pack/packges-beta/
           echo "=== Instalando Prioridade (oxys-base.deb) ==="
           apt-get install -y ./prioridade/*.deb || apt-get install -f -y
-          echo "=== Instalando Temas (*.deb) ==="
-          apt-get install -y ./temas/*.deb || apt-get install -f -y
+          clear
           echo "=== Instalando Config Calamares (oxy-calamares-settings.deb) ==="
           apt-get install -y ./calamares-temas/*.deb || apt-get install -f -y
+          cd /build_root/oxys-pack
+          cp /build_root/oxys-pack/sistema/etc/os-release /etc
+          cp /build_root/oxys-pack/sistema/etc/default/* /etc/default
+          cp /build_root/oxys-pack/backgrounds/oxys /usr/share/backgrounds
+          cp /build_root/oxys-pack/slim/oxys /usr/share/slim/themes
+          cp /build_root/oxys-pack/sistema/etc/slim.conf /etc
+          
       # 5. Estruturar o diretório Live da ISO e extrair Kernel/Initrd
       - name: Estruturar diretórios /live e /boot/grub
         run: |
