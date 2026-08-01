@@ -51,7 +51,7 @@ jobs:
             # Copiar temas e papéis de parede (-r para pastas)
             mkdir -p /usr/share/backgrounds /usr/share/slim/themes
             cp -r /build_root/oxys-pack/backgrounds/oxys /usr/share/backgrounds/
-            cp -r /build_root/oxys-pack/slim/oxys /usr/share/slim/themes/
+            cp -r /build_root/oxys-pack/slim/themes/oxys /usr/share/slim/themes/
             
             # Copiar skel e xdg recursivamente (preservando permissões e estrutura)
             cp -r /build_root/oxys-pack/sistema/etc/skel/. /etc/skel/
