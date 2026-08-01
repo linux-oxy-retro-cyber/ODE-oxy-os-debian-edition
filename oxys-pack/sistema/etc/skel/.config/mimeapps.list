@@ -1,0 +1,4 @@
+[Default Applications]
+application/vnd.debian.binary-package=gdebi.desktop
+application/x-deb=gdebi.desktop
+application/x-debian-package=gdebi.desktop
