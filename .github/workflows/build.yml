@@ -39,7 +39,6 @@ jobs:
           cd /build_root/oxys-pack/packges-beta/
           echo "=== Instalando Prioridade (oxys-base.deb) ==="
           apt-get install -y ./prioridade/*.deb || apt-get install -f -y
-          clear
           echo "=== Instalando Config Calamares (oxy-calamares-settings.deb) ==="
           apt-get install -y ./calamares-temas/*.deb || apt-get install -f -y
           cd /build_root/oxys-pack
