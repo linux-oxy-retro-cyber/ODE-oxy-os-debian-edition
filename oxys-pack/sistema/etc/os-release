@@ -1,8 +1,8 @@
-PRETTY_NAME="Oxys OS v1.5 (wired) beta"
-NAME="Oxys OS (wired)"
-VERSION_ID="1.5 beta"
-VERSION="1.5 beta"
-VERSION_CODENAME=(wired)
+PRETTY_NAME="Oxys OS v2.0 (alice)"
+NAME="Oxys OS (alice)"
+VERSION_ID="2.0"
+VERSION="2.0"
+VERSION_CODENAME=(alice)
 ID=oxys
 ID_LIKE=debian
 HOME_URL="https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition"
