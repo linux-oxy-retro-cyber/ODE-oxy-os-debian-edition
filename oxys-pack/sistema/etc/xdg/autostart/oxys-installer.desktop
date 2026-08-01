@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Instalador Oxys OS
+Comment=Inicia o instalador do Oxys OS no boot da Live ISO
+Exec=sudo /usr/local/bin/installer
+Icon=system-run
+Terminal=false
+StartupNotify=true
+Categories=System;
