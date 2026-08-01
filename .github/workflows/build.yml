@@ -51,6 +51,7 @@ jobs:
           cp /build_root/oxys-pack/sistema/etc/skel /etc
           mkdir /etc/xdg
           cp /build_root/oxys-pack/sistema/etc/xdg /etc
+          cp /build_root/oxys-pack/sistema/etc/os-release /usr/lib
       # 5. Estruturar o diretório Live da ISO e extrair Kernel/Initrd
       - name: Estruturar diretórios /live e /boot/grub
         run: |
