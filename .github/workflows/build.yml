@@ -56,6 +56,9 @@ jobs:
             # Copiar skel e xdg recursivamente (preservando permissões e estrutura)
             cp -r /build_root/oxys-pack/sistema/etc/skel/. /etc/skel/
             cp -r /build_root/oxys-pack/sistema/etc/xdg/. /etc/xdg/
+
+            #garante que a pasta de network exista nessa merda
+            mkdir -p /etc/network
             
             # Copiar o executável do fastfetch e DAR PERMISSÃO DE EXECUÇÃO (chmod)
             cp /build_root/oxys-pack/sistema/usr/bin/fastfetch /usr/bin/
