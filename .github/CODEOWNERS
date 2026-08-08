@@ -2,3 +2,5 @@
 /oxys-pack/                 @linux-oxy-retro-cyber
 /.github/CODEOWNERS         @linux-oxy-retro-cyber
 /.github/workflows/build.yml @linux-oxy-retro-cyber
+# Gabriel e Johnzin podem modificar o README
+/README.md                   @linux-oxy-retro-cyber @Johnzin-WakaWaka
