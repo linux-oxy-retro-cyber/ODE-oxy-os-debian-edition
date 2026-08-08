@@ -42,6 +42,7 @@ jobs:
           echo "=== Instalando Config Calamares (oxy-calamares-settings.deb) ==="
           apt-get install -y ./calamares-temas/*.deb || apt-get install -f -y
           cd /build_root/oxys-pack
+          apt-get update && apt-get install -y slim
             # Copiar arquivos de configuração do sistema
             cp /build_root/oxys-pack/sistema/etc/os-release /etc
             cp /build_root/oxys-pack/sistema/etc/os-release /usr/lib
