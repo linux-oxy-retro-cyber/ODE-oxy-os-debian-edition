@@ -27,7 +27,7 @@ jobs:
         run: |
           # Configurações de tempo (janela exata da última 1 hora)
           TIMESTAMP_NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          TIMESTAMP_PAST=$(date -u -d '1 hour ago' +"%Y-%m-%dT%H:%M:%SZ")
+          TIMESTAMP_PAST=$(date -u -d '168 hour ago' +"%Y-%m-%dT%H:%M:%SZ")
           TIMESTAMP_FILE=$(date -u +"%Y%m%d_%H%M%S")
           
           REPORT_DIR="vanessa_audit_${TIMESTAMP_FILE}"
