@@ -78,19 +78,41 @@ Para garantir compatibilidade imediata de hardware (como placas Wi-Fi, Bluetooth
 
 Este é um projeto independente e comunitário, e contribuições são muito bem-vindas! Se você deseja enviar melhorias, correções de bugs, scripts ou modificações para o projeto, por favor, siga as regras abaixo para o envio:
 
-### 📦 Regras para Envio de Contribuições
+🛠️ Diretrizes para Envio de Pull Requests (PR)
 
-Para garantir que tudo seja analisado e integrado de forma organizada e segura, exigimos que todas as contribuições sigam este padrão:
+Para manter a organização, estabilidade e integridade do repositório, todas as contribuições via Pull Request devem seguir estritamente as regras de estrutura e documentação abaixo.
+1. Requisitos de Estrutura e Escopo
 
-1. **Envio Compactado:** 
-   * Envie seus arquivos alterados ou novos scripts em um arquivo compactado (formatos aceitos: `.zip`, `.tar.gz` ou `.tar.xz`).
-   * Vc tambem pode entrar em contato pelos emails de contado fornecido anteriomente
-2. **Documentação de Mudanças (OBRIGATÓRIO):** 
-   * Junto com os arquivos dentro do pacote compactado, você **deve incluir** um arquivo `README.md` (ou um arquivo de `changelog.log`) explicando detalhadamente:
-     * **O que foi modificado/adicionado:** Liste todos os arquivos, linhas de código ou configurações que foram alteradas.
-     * **Por que a mudança foi feita:** Explique o motivo da alteração, qual problema ela resolve ou qual melhoria ela traz para o sistema.
+    Preservação da Estrutura: A árvore e a hierarquia de pastas originais do repositório devem ser mantidas intactas.
 
-> ⚠️ **Aviso:** Envíos desorganizados, sem o arquivo explicativo ou sem a estrutura de log necessária não serão analisados nem integrados ao repositório principal.
+    Substituição de Pacotes e Arquivos:
 
----
+        Você só deve alterar ou substituir arquivos/pacotes existentes caso eles mantenham o mesmo nome exato do arquivo original.
 
+        Caso seja necessário criar, mover ou renomear arquivos/pastas, você deve fornecer uma justificativa técnica clara na descrição do Pull Request.
+
+2. Identificação do Contribuidor (OBRIGATÓRIO)
+
+    Todo Pull Request deve incluir um arquivo texto de identificação na raiz do projeto (ou no diretório da alteração):
+
+        Nome do arquivo: CONTRIBUTORS.txt (ou CONTRIBUTOR.txt)
+
+        Conteúdo: Nome completo do desenvolvedor, usuário do GitHub e uma breve descrição da contribuição.
+
+3. Documentação e Changelog (OBRIGATÓRIO)
+
+Junto ao envio do Pull Request (ou dentro da pasta do pacote alterado), é obrigatório fornecer um arquivo README.md ou CHANGELOG.log contendo:
+
+    Escopo das Modificações: Relação detalhada de todos os pacotes, scripts ou configurações alterados/adicionados.
+
+    Justificativa Técnica: Explicação clara sobre o motivo da mudança, detalhando qual bug foi corrigido, qual ganho de desempenho foi obtido ou qual melhoria foi implementada.
+
+4. Alternativa de Envio via Pacote Compactado
+
+Caso o contribuidor opte por enviar as alterações via e-mail ou canal de suporte listado na documentação do projeto:
+
+    Os arquivos devem ser empacotados mantendo a estrutura de diretórios original nos formatos .zip, .tar.gz ou .tar.xz.
+
+    O pacote deve conter o arquivo de identificação (CONTRIBUTORS.txt) e o log explicativo das alterações.
+
+    ⚠️ Atenção: Pull Requests que apresentem arquivos desorganizados, alterações na estrutura de pastas sem justificativa, ou que omitam a documentação obrigatória serão recusados (closed) sem análise prévia ou integração ao branch principal.
