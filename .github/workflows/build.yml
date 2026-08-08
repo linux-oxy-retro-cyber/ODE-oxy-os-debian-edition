@@ -96,7 +96,7 @@ jobs:
           cp -f /initrd.img /iso_work/live/initrd.img || cp -f /boot/initrd.img-* /iso_work/live/initrd.img
           # Compacta a raiz em filesystem.squashfs dentro da pasta /live
           mksquashfs / /iso_work/live/filesystem.squashfs \
-            -e /iso_work /build_root
+            -e /iso_work /build_root /__t /__w /__e /github
       # 6. Injetar GRUB.cfg personalizado
       - name: Configurar GRUB bootloader
         run: |
