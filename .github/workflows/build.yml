@@ -59,6 +59,15 @@ jobs:
 
             #garante que a pasta de network exista nessa merda
             mkdir -p /etc/network
+
+            # Define o SLiM como padrão nas configurações do debconf
+            echo "slim shared/default-x-display-manager select slim" | debconf-set-selections
+
+            # Garante que o usuário root existe e remove a senha dele
+            passwd -d root
+            
+            # Garante o link simbólico do sistema de login
+            systemctl enable slim.service
             
             # Copiar o executável do fastfetch e DAR PERMISSÃO DE EXECUÇÃO (chmod)
             cp /build_root/oxys-pack/sistema/usr/bin/fastfetch /usr/bin/
