@@ -1,0 +1,4 @@
+#apenas gabriel pode modificar
+/oxys-pack/                 @linux-oxy-retro-cyber
+/.github/CODEOWNERS         @linux-oxy-retro-cyber
+/.github/workflows/build.yml @linux-oxy-retro-cyber
