@@ -69,8 +69,11 @@ jobs:
             
             # Garante o link simbólico do sistema de login
             systemctl enable slim.service
+            
             # 1. Altera o arquivo /etc/hostname
-           echo "oxys-os" > /etc/hostname
+            # Grava direto no arquivo usando redirecionamento seguro:
+            echo "127.0.0.1 localhost oxys-os" > /etc/hosts
+            echo "oxys-os" > /etc/hostname
 
            # 2. Atualiza o /etc/hosts para refletir o novo nome
            sed -i 's/127.0.1.1.*/127.0.1.1\toxys-os/' /etc/hosts
