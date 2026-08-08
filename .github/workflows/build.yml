@@ -63,7 +63,7 @@ jobs:
 
             # Define o SLiM como padrão nas configurações do debconf
             echo "slim shared/default-x-display-manager select slim" | debconf-set-selections
-
+            systemctl disable lightdm 2>/dev/null || true
             # Garante que o usuário root existe e remove a senha dele
             passwd -d root
             
