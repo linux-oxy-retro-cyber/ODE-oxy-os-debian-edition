@@ -74,9 +74,6 @@ jobs:
             # Grava direto no arquivo usando redirecionamento seguro:
             echo "127.0.0.1 localhost oxys-os" > /etc/hosts
             echo "oxys-os" > /etc/hostname
-
-           # 2. Atualiza o /etc/hosts para refletir o novo nome
-           sed -i 's/127.0.1.1.*/127.0.1.1\toxys-os/' /etc/hosts
             
             # Copiar o executável do fastfetch e DAR PERMISSÃO DE EXECUÇÃO (chmod)
             cp /build_root/oxys-pack/sistema/usr/bin/fastfetch /usr/bin/
