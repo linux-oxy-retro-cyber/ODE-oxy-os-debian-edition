@@ -43,23 +43,23 @@ jobs:                 #inicia tudo
       # 4. Criar Chroot / Sistema do Oxys OS e aplicar pacotes .deb
       - name: Preparar chroot e instalar pacotes do Oxys OS
         run: |
-          cd /build_root/oxys-pack/packges-beta/
-          echo "=== Instalando Prioridade (oxys-base.deb) ==="
-          apt-get install -y ./prioridade/*.deb || apt-get install -f -y
-          echo "=== Instalando Config Calamares (oxy-calamares-settings.deb) ==="
-          apt-get install -y ./calamares-temas/*.deb || apt-get install -f -y
+          cd /build_root/oxys-pack/packges-beta/              #entra na pasta dos pacotes 
+          echo "=== Instalando Prioridade (oxys-base.deb) ==="    #exibe a mensagem de intalaçao de pacotes
+          apt-get install -y ./prioridade/*.deb || apt-get install -f -y  #preucura e instala todos .deb da pasta
+          echo "=== Instalando Config Calamares (oxy-calamares-settings.deb) ===" #exibe na tela a mensagem
+          apt-get install -y ./calamares-temas/*.deb || apt-get install -f -y #instala outro pacote
           cd /build_root/oxys-pack
           apt-get update && apt-get install -y slim
             # Copiar arquivos de configuração do sistema
-            cp /build_root/oxys-pack/sistema/etc/os-release /etc
-            cp /build_root/oxys-pack/sistema/etc/os-release /usr/lib
-            cp /build_root/oxys-pack/sistema/etc/default/* /etc/default
-            cp /build_root/oxys-pack/sistema/etc/slim.conf /etc
+            cp /build_root/oxys-pack/sistema/etc/os-release /etc #copia o os-release
+            cp /build_root/oxys-pack/sistema/etc/os-release /usr/lib #copia o os-release
+            cp /build_root/oxys-pack/sistema/etc/default/* /etc/default #copia o /etc/default com os arquivo zram e grub
+            cp /build_root/oxys-pack/sistema/etc/slim.conf /etc #copia a config do slim
             
             # Copiar temas e papéis de parede (-r para pastas)
-            mkdir -p /usr/share/backgrounds /usr/share/slim/themes
-            cp -r /build_root/oxys-pack/backgrounds/oxys /usr/share/backgrounds/
-            cp -r /build_root/oxys-pack/slim/themes/oxys /usr/share/slim/themes/
+            mkdir -p /usr/share/backgrounds /usr/share/slim/themes #garante a pasta do slim
+            cp -r /build_root/oxys-pack/backgrounds/oxys /usr/share/backgrounds/ copia o backgrounds
+            cp -r /build_root/oxys-pack/slim/themes/oxys /usr/share/slim/themes/ #copia o tema do slim
             
             # Copiar skel e xdg recursivamente (preservando permissões e estrutura)
             cp -r /build_root/oxys-pack/sistema/etc/skel/. /etc/skel/
