@@ -1,13 +1,20 @@
+#=============================================================
+#compilador de isos baseado no ecosistema debain
+#ele usa container e comandos pacotes como base-config
+#e modifica pastas como /etc
+#ele contain o binarios do fastfetch e arquivos modificado
+#o projeto e disponibilizado em GPLv3
+#============================================================
 name: Lain Build - Geradora de ISO Oxys OS
 
 on:
   workflow_dispatch: # Botão manual na aba Actions
 
-jobs:
+jobs:                 #inicia tudo 
   build-iso:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest #inicia o ubuntu como host
     container:
-      image: debian:stable
+      image: debian:stable #inicia o debian como container pra ser trasnformado
 
     steps:
       # 1. Configura repositórios do Debian (main, contrib, non-free, non-free-firmware)
