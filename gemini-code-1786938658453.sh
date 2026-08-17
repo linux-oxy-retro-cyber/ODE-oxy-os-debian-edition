@@ -1,1 +1,0 @@
-alias fastfetch='fastfetch --config /etc/fastfetch/config.jsonc'
