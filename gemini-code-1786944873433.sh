@@ -1,1 +1,0 @@
-sudo mksquashfs / /caminho/onde/vai/salvar/filesystem.squashfs -comp xz -b 1M -wildcards -e "dev/*" "proc/*" "sys/*" "run/*" "tmp/*" "mnt/*" "media/*" "lost+found/*"
