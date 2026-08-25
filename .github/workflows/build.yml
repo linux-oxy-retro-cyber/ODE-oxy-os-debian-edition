@@ -69,13 +69,13 @@ jobs:                 #inicia tudo
             mkdir -p /etc/network
 
             # Define o SLiM como padrão nas configurações do debconf
-            echo "slim shared/default-x-display-manager select slim" | debconf-set-selections
-            systemctl disable lightdm 2>/dev/null || true
+            #echo "slim shared/default-x-display-manager select slim" | debconf-set-selections
+            # systemctl disable lightdm 2>/dev/null || true
             # Garante que o usuário root existe e remove a senha dele
             passwd -d root
             
             # Garante o link simbólico do sistema de login
-            systemctl enable slim.service
+             #systemctl enable slim.service
             
             # 1. Altera o arquivo /etc/hostname
             # Grava direto no arquivo usando redirecionamento seguro:
@@ -90,8 +90,8 @@ jobs:                 #inicia tudo
             chmod -R 755 /etc/skel
             
             # Garantir os pontos de montagem reais do Linux (VAZIOS)
-            mkdir -p /dev /proc /sys /run /mnt /media /tmp
-            chmod 1777 /tmp  # /tmp precisa da permissão 1777
+            #mkdir -p /dev /proc /sys /run /mnt /media /tmp
+            #chmod 1777 /tmp  # /tmp precisa da permissão 1777
             #para o sistema funcionar liso!
          
       # 5. Estruturar o diretório Live da ISO e extrair Kernel/Initrd
@@ -115,8 +115,8 @@ jobs:                 #inicia tudo
           insmod vbe
           insmod gfxterm
           menuentry "Oxys Debian Edition (Live SquashFS)" {
-              linux /live/vmlinuz boot=live
-              initrd /live/initrd.img
+              linux /live/vmlinuz boot=live loglevel=7 #garante q a porra dos logs estejao ativas nessa merda
+              initrd /live/initrd.img #eo intird ou initramfs 
           }
           EOF
       # 7. Compilar a ISO Bootável
