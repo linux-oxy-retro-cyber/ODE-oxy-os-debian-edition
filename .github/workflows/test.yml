@@ -5,7 +5,7 @@
 #ele contain o binarios do fastfetch e arquivos modificado
 #o projeto e disponibilizado em GPLv3
 #============================================================
-name: Lain Build - Geradora de ISO Oxys OS
+name: Lain Build test gnome
 
 on:
   workflow_dispatch: # Botão manual na aba Actions
