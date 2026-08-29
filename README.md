@@ -8,8 +8,7 @@
 [![Language](https://img.shields.io/badge/Language-Shell_Script-4E8098?logo=gnu-bash&logoColor=white)]()
 [![Arch](https://img.shields.io/badge/Arch-x86__64-informational.svg)]() 
 [![YouTube Gabriel do Linux](https://img.shields.io/badge/YouTube-Gabriel_do_Linux-FF0000?logo=youtube&logoColor=white)](https://youtube.com/@fprowindows?si=Ut4MthfTAL6Yf5ih)
-[![YouTu[![WebSite](https://img.shields.io/badge/coverage-95%25-orange)](https://johnzin-wakawaka.github.io/OxyohanOS/)be omochain](https://img.shields.io/badge/YouTube-omochain-FF0000?logo=youtube&logoColor=white)](https://youtube.com/@johnzinomochain?si=dPvf7zzrf67kuxji)
-
+[![WebSite](https://img.shields.io/badge/coverage-95%25-orange)](https://johnzin-wakawaka.github.io/OxyohanOS/) [![YouTube](https://img.shields.io/badge/YouTube-omochain-FF0000?style=flat&logo=youtube&logoColor=white)](https://youtube.com/@johnzinomochain?si=dPvf7zzrf67kuxji)
 [![Non-Profit](https://img.shields.io/badge/Project-Non--Profit-00A86B?logo=heart&logoColor=white)]()
 [![GitHub Release](https://img.shields.io/github/v/release/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition?color=blue&logo=github)](https://github.com/linux-oxy-retro-cyber/ODE-oxy-os-debian-edition/releases)
 [![Indie](https://img.shields.io/badge/Type-Indie_Project-FF4500?logo=rocket&logoColor=white)]()
