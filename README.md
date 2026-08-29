@@ -42,6 +42,7 @@ O ecossistema se divide em duas ramificações principais, ambas utilizando atua
 ![wall](imagens/WallpaperYohan.png)
 ### 🎨 OxyohanOS
 *   **Desenvolvedor:** Johnzin (`@JohnzinOmochain`)
+*   **sub desenvolvedor** Gabriel Ramos Barbosa
 *   **Foco principal:** Uso normal/cotidiano e experiência de usuário de ponta.
 *   **Base do Sistema:** Utiliza a base estável modificada do projeto principal, adaptada para entregar um sistema extremamente bonito, fluido e pronto para as tarefas do dia a dia.
 *   **Público-alvo:** Usuários comuns e desenvolvedores que buscam um sistema moderno, customizado visualmente e prático para navegar, estudar e trabalhar.
