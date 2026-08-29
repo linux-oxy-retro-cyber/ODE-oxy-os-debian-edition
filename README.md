@@ -60,6 +60,8 @@ Navegue pelo menu lateral para acessar o guia de instalação, documentação do
 JohnzinOmochain: johnzincontato@gmail.com
 <br>
 Gabriel do Linux (@fprowindows): apeludoff120@gmail.com
+<br>
+OxyohanOfficial: oxys.contact.official@gmail.com
 ---
 ## Licença e Compatibilidade de Hardware
 
