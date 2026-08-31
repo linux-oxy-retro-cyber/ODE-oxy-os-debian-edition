@@ -61,6 +61,30 @@ def nmtui():
     print("Erro 103 - Você não tem permissão de root para o nmtui", file=sys.stderr)
   except FileNotFoundError:
     print("Erro 707 - Por algum motivo o nmtui não foi encontrado", file=sys.stderr)
+    
+def nano():
+  try:
+    subprocess.run("nano", check=True)
+  except subprocess.CalledProcessError:
+    print("Erro 103 - Você não tem permissão de root para o nano", file=sys.stderr)
+  except FileNotFoundError:
+    print("Erro 707 - Por algum motivo o nano não foi encontrado", file=sys.stderr)
+    
+def pingYeah():
+  try:
+    subprocess.run(["ping", "-c", "3", "8.8.8.8"], check=True)
+  except subprocess.CalledProcessError:
+    print("Erro 103 - Você não tem permissão de root para o ping", file=sys.stderr)
+  except FileNotFoundError:
+    print("Erro 707 - Por algum motivo o ping não foi encontrado", file=sys.stderr)
+    
+def XorgInit():
+  try:
+    subprocess.run("startx", check=True)
+  except subprocess.CalledProcessError:
+    print("Erro 103 - Você não tem permissão de root para o Xorg", file=sys.stderr)
+  except FileNotFoundError:
+    print("Erro 707 - Por algum motivo o Xorg não foi encontrado", file=sys.stderr)
 
 def verificar_integridade():
   """Funcionalidade extra: Verificação rápida de espaço em disco e pacotes."""
@@ -73,6 +97,7 @@ def verificar_integridade():
   pausar()
 
 # Cabecalho
+limpar_tela()
 print("Central de Manuntenção do OxyohanOS")
 print("Build 1.0.35.jzww.gbdl.oxy.debian")
 print("Criado por JohnzinOmochain")
@@ -88,6 +113,10 @@ while session == True:
   print("5 - Diagnóstico rápido (Espaço em disco / RAM)")
   print("6 - Monitorar o Sistema (6.1 - btop | 6.2 - htop) (Ctrl+C sai do btop e F10 do htop)")
   print("7 - Gerenciar redes (nmtui)")
+  print("8 - Abrir o NANO (Para consertar algum arquivo de configuração)")
+  print("9 - Verificar o PING")
+  print("10 - Iniciar o Xorg")
+  print("11 - Reiniciar")
   inpuu = input()
   if inpuu == "1":
     # Fecha o programa
@@ -96,15 +125,31 @@ while session == True:
     print(subprocess.run("date"))
   elif inpuu == "3":
     ver_particoes()
+    limpar_tela()
   elif inpuu == "4":
     cfdisk()
+    limpar_tela()
   elif inpuu == "5":
     verificar_integridade()
+    limpar_tela()
   elif inpuu == "6.1":
     btop()
+    limpar_tela()
   elif inpuu == "6.2":
     htop()
+    limpar_tela()
   elif inpuu == "7":
     nmtui()
+    limpar_tela()
+  elif inpuu == "8":
+    nano()
+    limpar_tela()
+  elif inpuu == "9":
+    pingYeah()
+    print("")
+  elif inpuu == "10":
+    XorgInit()
+  elif inpuu == "11":
+    print(subprocess.run("reboot"))
   else:
     print("Comando não encontrado")
