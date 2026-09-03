@@ -11,6 +11,12 @@ def menuserviceMgr():
   print("|           Service Manager            |")
   print("|      Criado por JohnzinOmochain      |")
   print("========================================")
+  
+def userserviceMgr():
+  print("========================================")
+  print("|            User Manager              |")
+  print("|      Criado por JohnzinOmochain      |")
+  print("========================================")
 
 def verificar_root():
   """Garante que o script está sendo executado como root."""
@@ -310,14 +316,187 @@ def stcli():
     pausar()
   except subprocess.CalledProcessError:
     print("Erro 103 - Você não tem permissão de root para o Speed Test Cli", file=sys.stderr)
+    pausar()
   except FileNotFoundError:
     print("Erro 707 - Por algum motivo o speedtest-cli não foi encontrado", file=sys.stderr)
+    pausar()
+    
+# Logs
+def logs():
+  limpar_tela()
+  try:
+    with open("logOxyohan.txt", "w") as arquivo:
+      subprocess.run(["dmesg"], stdout=arquivo, check=True)
+    subprocess.run(["sudo", "nano", "logOxyohan.txt"], check=True)
+  except subprocess.CalledProcessError:
+    print("Erro 103 - Você não tem permissão de root para o dmesg", file=sys.stderr)
+    pausar()
+  except FileNotFoundError:
+    print("Erro 707 - Por algum motivo o dmesg não foi encontrado", file=sys.stderr)
+    pausar()
+    
+# APT update
+def aptUpd():
+  limpar_tela()
+  try:
+    subprocess.run(["sudo", "apt", "update"], check=True)
+    pausar()
+  except subprocess.CalledProcessError:
+    print("Erro 103 - Você não tem permissão de root para o APT", file=sys.stderr)
+    pausar()
+  except FileNotFoundError:
+    print("Erro 707 - Por algum motivo o apt não foi encontrado", file=sys.stderr)
+    pausar()
+    
+# APT upgrade
+def aptUpg():
+  limpar_tela()
+  try:
+    subprocess.run(["sudo", "apt", "upgrade"], check=True)
+    pausar()
+  except subprocess.CalledProcessError:
+    print("Erro 103 - Você não tem permissão de root para o APT", file=sys.stderr)
+    pausar()
+  except FileNotFoundError:
+    print("Erro 707 - Por algum motivo o apt não foi encontrado", file=sys.stderr)
+    pausar()
+    
+# See hardware
+def lshw():
+  try:
+    subprocess.run(["sudo", "lshw"], check=True)
+  except subprocess.CalledProcessError:
+    print("Erro 103 - Você não tem permissão de root para o lshw", file=sys.stderr)
+    pausar()
+  except FileNotFoundError:
+    print("Erro 707 - Por algum motivo o lshw não foi encontrado", file=sys.stderr)
+    pausar()
 
-# Cabecalho
-limpar_tela()
+# User Manager
+def userctlYeah():
+  limpar_tela()
+  userserviceMgr()
+  print("1 - Voltar ao Início")
+  print("2 - Listar os Usuários")
+  print("3 - Criar um Usuário (adduser)")
+  print("4 - DELETAR um Usuário (deluser + perl)")
+  print("5 - Mudar a SENHA de um usuario")
+  print("6 - Mudar a SENHA do ROOT")
+  
+  inpush = input('-> ')
+  
+  if inpush == "1":
+    sess = False
+  elif inpush == "2":
+    listUsr()
+  elif inpush == "3":
+    addUsr()
+  elif inpush == "4":
+    delUsr()
+  elif inpush == "5":
+    passUsr()
+  elif inpush == "6":
+    RootAss()
+  else:
+    print("Comando não detectado")
+    
+def listUsr():
+  limpar_tela()
+  print("=== Usuários no Oxyohan ===")
+  try:
+    subprocess.run(["cut", "-d:", "-f1", "/etc/passwd"], check=True)
+    pausar()
+  except subprocess.CalledProcessError:
+    print("Erro 103 - Você não tem permissão de root para o cut", file=sys.stderr)
+    pausar()
+  except FileNotFoundError:
+    print("Erro 707 - Por algum motivo o cut não foi encontrado", file=sys.stderr)
+    pausar()
+
+def addUsr():
+  limpar_tela()
+  print("=== Adicionar um Usuário ===")
+  print("Digite o nome (q - sair):")
+  addname = input("-> ")
+  
+  if addname == "":
+    print("Nome inválido")
+    pausar()
+  elif addname == "q":
+    pausar()
+  else:
+    try:
+      subprocess.run(["sudo", "adduser", addname], check=True)
+      print("Usuário adicionado com susseso!")
+      pausar()
+    except subprocess.CalledProcessError:
+      print("Erro 301 - Não foi possivel criar o usuário, provavelmente não tem permissão ou aconteceu de não funcioanr o comando 'adduser'", file=sys.stderr)
+      pausar()
+      
+def delUsr():
+  limpar_tela()
+  print("=== DELETAR um Usuário ===")
+  print("ISSO TAMBÉM DELETARÁ A PASTA DO USUÁRIO EM CASO DE VIRUS OU MALWARE")
+  print("Digite o nome (q - sair):")
+  addname = input("-> ")
+  
+  if addname == "":
+    print("Nome inválido")
+    pausar()
+  elif addname == "q":
+    pausar()
+  else:
+    try:
+      subprocess.run(["sudo", "deluser", "--remove-home", addname], check=True)
+      print("Usuário EVAPORADO com susseso!")
+      pausar()
+    except subprocess.CalledProcessError:
+      print("Erro 301 - Não foi possivel criar o usuário, provavelmente não tem permissão, digitou o nome errado ou aconteceu de não funcioanr o comando 'adduser'", file=sys.stderr)
+      pausar()
+      
+def passUsr():
+  limpar_tela()
+  print("=== Mudar a SENHA um Usuário ===")
+  print("LEMBRE-SE da senha")
+  print("Digite o nome do usuário (q - sair):")
+  addname = input("-> ")
+  
+  if addname == "":
+    print("Nome inválido")
+    pausar()
+  elif addname == "q":
+    pausar()
+  else:
+    try:
+      subprocess.run(["sudo", "passwd", addname], check=True)
+      print("Usuário ALTERADO com susseso!")
+      pausar()
+    except subprocess.CalledProcessError:
+      print("Erro 301 - Não foi possivel criar o usuário, provavelmente não tem permissão, digitou o nome errado ou aconteceu de não funcioanr o comando 'adduser'", file=sys.stderr)
+      pausar()
+      
+def RootAss():
+  limpar_tela()
+  try:
+    subprocess.run(["sudo", "passwd", "root"], check=True)
+    pausar()
+  except subprocess.CalledProcessError:
+    print("Erro 103 - Você não tem permissão de root para o alterar, BAKA!", file=sys.stderr)
+    pausar()
+    
+def inxi():
+  limpar_tela()
+  try:
+    subprocess.run(["sudo", "inxi"], check=True)
+    pausar()
+  except subprocess.CalledProcessError:
+    print("Erro 103 - Você não tem permissão de root para rodar o inxi, BAKA!", file=sys.stderr)
+    pausar()
 
 # Input e ações
 while session == True:
+  # Cabecalho
+  limpar_tela()
   print("===========================================================")
   print("|         Central de Manuntenção do OxyohanOS             |")
   print("|             Criado por JohnzinOmochain                  |")
@@ -339,6 +518,9 @@ while session == True:
   print("13 - Gerenciador de Servicos")
   print("14 - Testar a velocidade da Internet (Speed Test Cli)")
   print("15 - Ver os logs do kernel")
+  print("16 - Atualizar o sistema (16.1 - APT update | 16.2 - APT upgrade)")
+  print("17 - Gerenciador de Usuários")
+  print("18 - Ver RESUMO do hardware do PC")
   inpuu = input('-> ')
   if inpuu == "1":
     # Fecha o programa
@@ -383,7 +565,21 @@ while session == True:
     stcli()
     limpar_tela()
   elif inpuu == "15":
-    yamatest()
+    logs()
+    limpar_tela()
+  elif inpuu == "16.1":
+    aptUpd()
+    limpar_tela()
+  elif inpuu == "16.2":
+    aptUpg()
+    limpar_tela()
+  elif inpuu == "17":
+    userctlYeah()
+    limpar_tela()
+  elif inpuu == "18":
+    inxi()
     limpar_tela()
   else:
+    limpar_tela()
     print("Comando não encontrado")
+    pausar()
